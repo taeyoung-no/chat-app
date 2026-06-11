@@ -38,6 +38,16 @@ router.post('/login', async (req, res) => {
   })
 })
 
+router.post('/logout', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ message: '로그인부터 하세요' })
+  
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ message: '로그아웃 실패' })
+    res.clearCookie('connect.sid')
+    res.json({ message: '로그아웃 성공' })
+  })
+})
+
 router.get('/me', isAuthenticated, (req, res) => {
   res.json({
     userId: req.session.userId,
