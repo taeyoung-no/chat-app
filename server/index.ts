@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import authRouter from './routes/auth.js'
+import roomRouter from './routes/room.js'
 import sessionMiddleware from './middleware/session.js'
 
 dotenv.config()
@@ -13,6 +14,7 @@ app.use(cors())
 app.use(express.json())
 app.use(sessionMiddleware)
 app.use('/auth', authRouter)
+app.use('/room', roomRouter)
 
 mongoose
   .connect(process.env.MONGODB_URI!)
