@@ -30,7 +30,7 @@ function App() {
     <div>
       <header className="border-b border-gray-200 mb-5">
         <nav className="max-w-2xl mx-auto py-4 flex items-center justify-between">
-          <span className="text-2xl">Open Chatting</span>
+          <h1 className="text-2xl">Open Chatting</h1>
 
           <button
             onClick={() => setShowLoginModal(true)}
