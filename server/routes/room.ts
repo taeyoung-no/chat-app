@@ -12,4 +12,9 @@ router.post('/', isAuthenticated, async (req, res) => {
   res.status(201).json({ message: '채팅방 생성 성공' })
 })
 
+router.get('/', async (req, res) => {
+  const rooms = await Room.find().sort({ createdAt: -1 })
+  res.status(200).json({ message: '채팅방 목록 조회 성공', rooms })
+})
+
 export default router
