@@ -69,7 +69,10 @@ function App() {
 
       <CreateRoomModal
         isOpen={showCreateRoomModal}
-        onClose={() => setShowCreateRoomModal(false)}
+        onClose={() => {
+          setShowCreateRoomModal(false)
+          fetchRooms()
+        }}
       />
     </div>
   )
