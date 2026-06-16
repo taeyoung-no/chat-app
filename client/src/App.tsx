@@ -35,10 +35,10 @@ function App() {
           <div className="flex items-center gap-4">
             <h1 className="text-2xl">Open Chatting</h1>
             <div className="flex items-center gap-2">
-              <button className="cursor-pointer">목록</button>
+              <button className="cursor-pointer hover:underline">목록</button>
               <button
                 onClick={() => setShowCreateRoomModal(true)}
-                className="cursor-pointer"
+                className="cursor-pointer hover:underline"
               >
                 생성
               </button>
@@ -47,7 +47,7 @@ function App() {
 
           <button
             onClick={() => setShowLoginModal(true)}
-            className="cursor-pointer"
+            className="cursor-pointer hover:underline"
           >
             로그인
           </button>
@@ -57,7 +57,9 @@ function App() {
       <main className="max-w-2xl mx-auto space-y-5">
         {rooms.map((room) => (
           <div key={room._id} className="cursor-pointer group">
-            <h4 className="text-2xl text-blue-800 group-hover:text-black group-hover:underline">{room.name}</h4>
+            <h4 className="text-2xl text-blue-800 group-hover:text-black group-hover:underline">
+              {room.name}
+            </h4>
           </div>
         ))}
       </main>
