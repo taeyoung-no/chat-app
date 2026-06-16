@@ -21,6 +21,7 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
       })
 
       if (res.ok) {
+        setName('')
         onClose()
       } else {
         const errorData = await res.json()
@@ -44,7 +45,10 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
         <div className="flex justify-end gap-2">
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              setName('')
+              onClose()
+            }}
             className="cursor-pointer px-3 py-2"
           >
             닫기
