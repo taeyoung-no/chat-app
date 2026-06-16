@@ -7,6 +7,8 @@ interface LoginModalProps {
 }
 
 function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const API_URL = import.meta.env.VITE_API_URL
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -14,7 +16,7 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
     if (e) e.preventDefault() // 새로고침 방지
 
     try {
-      const res = await fetch('http://localhost:8080/auth/login', {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

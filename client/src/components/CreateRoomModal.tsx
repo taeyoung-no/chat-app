@@ -7,13 +7,15 @@ interface CreateRoomModalProps {
 }
 
 function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
+  const API_URL = import.meta.env.VITE_API_URL
+
   const [name, setName] = useState('')
 
   const handleCreate: SubmitEventHandler<HTMLFormElement> = async (e) => {
     if (e) e.preventDefault()
 
     try {
-      const res = await fetch('http://localhost:8080/room', {
+      const res = await fetch(`${API_URL}/room`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),

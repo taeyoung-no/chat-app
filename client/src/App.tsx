@@ -10,13 +10,15 @@ interface Room {
 }
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_URL
+
   const [rooms, setRooms] = useState<Room[]>([])
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
 
   const fetchRooms = async () => {
     try {
-      const res = await fetch('http://localhost:8080/room')
+      const res = await fetch(`${API_URL}/room`)
       const data = await res.json()
       setRooms(data.rooms || [])
     } catch (err) {
