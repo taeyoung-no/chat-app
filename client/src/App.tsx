@@ -54,10 +54,10 @@ function App() {
         </nav>
       </header>
 
-      <main className="max-w-2xl mx-auto space-y-2">
+      <main className="max-w-2xl mx-auto space-y-5">
         {rooms.map((room) => (
-          <div key={room._id} className="p-4 border border-gray-300">
-            <h4>{room.name}</h4>
+          <div key={room._id} className="cursor-pointer group">
+            <h4 className="text-2xl text-blue-800 group-hover:text-black group-hover:underline">{room.name}</h4>
           </div>
         ))}
       </main>
