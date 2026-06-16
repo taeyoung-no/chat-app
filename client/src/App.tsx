@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import LoginModal from './components/LoginModal'
+import CreateRoomModal from './components/CreateRoomModal'
 
 interface Room {
   _id: string
@@ -11,6 +12,7 @@ interface Room {
 function App() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
 
   const fetchRooms = async () => {
     try {
@@ -30,7 +32,18 @@ function App() {
     <div>
       <header className="border-b border-gray-200 mb-5">
         <nav className="max-w-2xl mx-auto py-4 flex items-center justify-between">
-          <h1 className="text-2xl">Open Chatting</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl">Open Chatting</h1>
+            <div className="flex items-center gap-2">
+              <button className="cursor-pointer">목록</button>
+              <button
+                onClick={() => setShowCreateRoomModal(true)}
+                className="cursor-pointer"
+              >
+                생성
+              </button>
+            </div>
+          </div>
 
           <button
             onClick={() => setShowLoginModal(true)}
@@ -52,6 +65,11 @@ function App() {
       <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
+      />
+
+      <CreateRoomModal
+        isOpen={showCreateRoomModal}
+        onClose={() => setShowCreateRoomModal(false)}
       />
     </div>
   )
