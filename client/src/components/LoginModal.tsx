@@ -66,11 +66,14 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
               setPassword('')
               onClose()
             }}
-            className="cursor-pointer px-3 py-2"
+            className="cursor-pointer px-3 py-2 hover:underline"
           >
             닫기
           </button>
-          <button type="submit" className="cursor-pointer px-3 py-2">
+          <button
+            type="submit"
+            className="cursor-pointer px-3 py-2 hover:underline"
+          >
             로그인
           </button>
         </div>

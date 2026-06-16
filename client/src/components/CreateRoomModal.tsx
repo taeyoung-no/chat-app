@@ -49,11 +49,14 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
               setName('')
               onClose()
             }}
-            className="cursor-pointer px-3 py-2"
+            className="cursor-pointer px-3 py-2 hover:underline"
           >
             닫기
           </button>
-          <button type="submit" className="cursor-pointer px-3 py-2">
+          <button
+            type="submit"
+            className="cursor-pointer px-3 py-2 hover:underline"
+          >
             확인
           </button>
         </div>
