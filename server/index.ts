@@ -10,7 +10,12 @@ dotenv.config()
 
 const app = express()
 
-app.use(cors())
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+)
 app.use(express.json())
 app.use(sessionMiddleware)
 app.use('/auth', authRouter)
@@ -29,4 +34,3 @@ const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`)
 })
-

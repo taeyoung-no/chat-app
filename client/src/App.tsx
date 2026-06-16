@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import LoginModal from './components/LoginModal'
 
 interface Room {
   _id: string
@@ -9,6 +10,7 @@ interface Room {
 
 function App() {
   const [rooms, setRooms] = useState<Room[]>([])
+  const [showLoginModal, setShowLoginModal] = useState(false)
 
   const fetchRooms = async () => {
     try {
@@ -25,18 +27,32 @@ function App() {
   }, [])
 
   return (
-    <div className="max-w-2xl mx-auto pt-5">
-      <header className="mb-5">
-        <h1 className="text-3xl font-bold text-center">Chat</h1>
+    <div>
+      <header className="border-b border-gray-200 mb-5">
+        <nav className="max-w-2xl mx-auto py-4 flex items-center justify-between">
+          <span className="text-2xl">Open Chatting</span>
+
+          <button
+            onClick={() => setShowLoginModal(true)}
+            className="cursor-pointer"
+          >
+            로그인
+          </button>
+        </nav>
       </header>
 
-      <main className="space-y-2">
+      <main className="max-w-2xl mx-auto space-y-2">
         {rooms.map((room) => (
           <div key={room._id} className="p-4 border border-gray-300">
             <h4>{room.name}</h4>
           </div>
         ))}
       </main>
+
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   )
 }
