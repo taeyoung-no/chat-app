@@ -1,5 +1,6 @@
 import { useState, type SubmitEventHandler } from 'react'
 import Modal from './Modal'
+import { login } from '../api/auth'
 
 interface LoginModalProps {
   isOpen: boolean
@@ -7,8 +8,6 @@ interface LoginModalProps {
 }
 
 function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const API_URL = import.meta.env.VITE_API_URL
-
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -16,23 +15,12 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
     if (e) e.preventDefault() // 새로고침 방지
 
     try {
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-        credentials: 'include',
-      })
-
-      if (res.ok) {
-        setUsername('')
-        setPassword('')
-        onClose()
-      } else {
-        const errorData = await res.json()
-        alert(errorData.message)
-      }
-    } catch (err) {
-      alert(err)
+      await login(username, password)
+      setUsername('')
+      setPassword('')
+      onClose()
+    } catch (err: any) {
+      alert(err.message || '로그인 실패')
     }
   }
 
