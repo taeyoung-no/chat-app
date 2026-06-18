@@ -2,57 +2,83 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import User from '../models/Users'
 import isAuthenticated from '../middleware/auth'
+import CustomError from '../utils/CustomError'
 
 const router = express.Router()
 
-router.post('/register', async (req, res) => {
-  const { username, password } = req.body
+router.post('/register', async (req, res, next) => {
+  try {
+    const { username, password } = req.body
 
-  const existingUser = await User.findOne({ username: username })
-  if (existingUser) return res.status(400).json({ message: 'username 중복임' })
+    const existingUser = await User.findOne({ username: username })
+    if (existingUser) return next(new CustomError('username 중복임', 400))
 
-  const hashedPassword = await bcrypt.hash(password, 10)
-  await User.create({
-    username: username,
-    password: hashedPassword,
-  })
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const user = await User.create({
+      username: username,
+      password: hashedPassword,
+    })
 
-  res.status(201).json({ message: '회원가입 성공' })
+    res.status(201).json({
+      success: true,
+      message: '회원가입 성공',
+      user: {
+        _id: user._id.toString(),
+        username: user.username,
+      },
+    })
+  } catch (err) {
+    next(err)
+  }
 })
 
-router.post('/login', async (req, res) => {
-  const { username, password } = req.body
+router.post('/login', async (req, res, next) => {
+  try {
+    const { username, password } = req.body
 
-  const user = await User.findOne({ username: username })
-  if (!user) return res.status(400).json({ message: '뭔가 잘못 입력함' })
+    const user = await User.findOne({ username: username })
+    if (!user) return next(new CustomError('뭔가 잘못 입력함', 400))
 
-  const isMatch = await bcrypt.compare(password, user.password)
-  if (!isMatch) return res.status(400).json({ message: '뭔가 잘못 입력함' })
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) return next(new CustomError('뭔가 잘못 입력함', 400))
 
-  req.session.userId = user._id.toString()
-  req.session.username = user.username
+    req.session.userId = user._id.toString()
+    req.session.username = user.username
 
-  res.json({
-    message: '로그인 성공',
-    username: user.username,
-  })
+    res.json({
+      success: true,
+      message: '로그인 성공',
+      user: {
+        _id: user._id.toString(),
+        username: user.username,
+      },
+    })
+  } catch (err) {
+    next(err)
+  }
 })
 
-router.post('/logout', (req, res) => {
-  if (!req.session.userId)
-    return res.status(401).json({ message: '로그인부터 하세요' })
+router.post('/logout', (req, res, next) => {
+  if (!req.session.userId) return next(new CustomError('로그인부터 하세요', 401))
 
   req.session.destroy((err) => {
-    if (err) return res.status(500).json({ message: '로그아웃 실패' })
+    if (err) return next(err)
     res.clearCookie('connect.sid')
-    res.json({ message: '로그아웃 성공' })
+    res.json({
+      success: true,
+      message: '로그아웃 성공',
+    })
   })
 })
 
 router.get('/me', isAuthenticated, (req, res) => {
   res.json({
-    userId: req.session.userId,
-    username: req.session.username,
+    success: true,
+    message: '유저 정보 조회 성공',
+    user: {
+      _id: req.session.userId,
+      username: req.session.username,
+    },
   })
 })
 
