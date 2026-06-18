@@ -2,12 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import LoginModal from './components/LoginModal'
 import CreateRoomModal from './components/CreateRoomModal'
-
-interface Room {
-  _id: string
-  name: string
-  createdAt: string
-}
+import { fetchRooms, type Room } from './api/rooms'
 
 function App() {
   const API_URL = import.meta.env.VITE_API_URL
@@ -16,18 +11,17 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
 
-  const fetchRooms = async () => {
+  const loadRooms = async () => {
     try {
-      const res = await fetch(`${API_URL}/room`)
-      const data = await res.json()
-      setRooms(data.rooms || [])
+      const data = await fetchRooms()
+      setRooms(data)
     } catch (err) {
       console.error(`방 목록 불러오기 실패: ${err}`)
     }
   }
 
   useEffect(() => {
-    fetchRooms()
+    loadRooms()
   }, [])
 
   return (
@@ -75,7 +69,7 @@ function App() {
         isOpen={showCreateRoomModal}
         onClose={() => {
           setShowCreateRoomModal(false)
-          fetchRooms()
+          loadRooms()
         }}
       />
     </div>
