@@ -5,8 +5,6 @@ import CreateRoomModal from './components/CreateRoomModal'
 import { fetchRooms, type Room } from './api/rooms'
 
 function App() {
-  const API_URL = import.meta.env.VITE_API_URL
-
   const [rooms, setRooms] = useState<Room[]>([])
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
