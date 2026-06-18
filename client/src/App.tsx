@@ -13,8 +13,8 @@ function App() {
     try {
       const data = await fetchRooms()
       setRooms(data)
-    } catch (err) {
-      console.error(`방 목록 불러오기 실패: ${err}`)
+    } catch (err: any) {
+      alert(err.message || '방 불러오기 실패')
     }
   }
 

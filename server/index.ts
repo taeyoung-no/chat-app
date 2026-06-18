@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import authRouter from './routes/auth.js'
 import roomRouter from './routes/room.js'
 import sessionMiddleware from './middleware/session.js'
+import errorHandler from './middleware/errorHandler.js'
 
 dotenv.config()
 
@@ -20,6 +21,7 @@ app.use(express.json())
 app.use(sessionMiddleware)
 app.use('/auth', authRouter)
 app.use('/room', roomRouter)
+app.use(errorHandler)
 
 mongoose
   .connect(process.env.MONGODB_URI!)

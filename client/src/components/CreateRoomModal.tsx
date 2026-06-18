@@ -1,5 +1,6 @@
 import { useState, type SubmitEventHandler } from 'react'
 import Modal from './Modal'
+import { createRoom } from '../api/rooms'
 
 interface CreateRoomModalProps {
   isOpen: boolean
@@ -15,22 +16,11 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
     if (e) e.preventDefault()
 
     try {
-      const res = await fetch(`${API_URL}/room`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-        credentials: 'include',
-      })
-
-      if (res.ok) {
-        setName('')
-        onClose()
-      } else {
-        const errorData = await res.json()
-        alert(errorData.message)
-      }
-    } catch (err) {
-      alert(err)
+      await createRoom(name)
+      setName('')
+      onClose()
+    } catch (err: any) {
+      alert(err.message || '방 생성 실패')
     }
   }
 
