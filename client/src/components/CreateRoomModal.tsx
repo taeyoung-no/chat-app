@@ -8,8 +8,6 @@ interface CreateRoomModalProps {
 }
 
 function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
-  const API_URL = import.meta.env.VITE_API_URL
-
   const [name, setName] = useState('')
 
   const handleCreate: SubmitEventHandler<HTMLFormElement> = async (e) => {
