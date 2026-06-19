@@ -1,6 +1,7 @@
-import { useState, type SubmitEventHandler } from 'react'
+import { useState } from 'react'
 import Modal from './Modal'
 import { createRoom } from '../api/rooms'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 interface CreateRoomModalProps {
   isOpen: boolean
@@ -9,22 +10,28 @@ interface CreateRoomModalProps {
 
 function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
   const [name, setName] = useState('')
+  const queryClient = useQueryClient()
 
-  const handleCreate: SubmitEventHandler<HTMLFormElement> = async (e) => {
-    if (e) e.preventDefault()
-
-    try {
-      await createRoom(name)
+  const mutation = useMutation({
+    mutationFn: createRoom,
+    onSuccess: () => {
       setName('')
       onClose()
-    } catch (err: any) {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] })
+    },
+    onError: (err: any) => {
       alert(err.message || '방 생성 실패')
-    }
+    },
+  })
+
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    mutation.mutate(name)
   }
 
   return (
     <Modal isOpen={isOpen} title="방 생성">
-      <form onSubmit={handleCreate}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={name}

@@ -14,7 +14,6 @@ function App() {
     isLoading,
     isError,
     error,
-    refetch,
   } = useQuery({
     queryKey: ['rooms'],
     queryFn: fetchRooms,
@@ -65,10 +64,7 @@ function App() {
 
       <CreateRoomModal
         isOpen={showCreateRoomModal}
-        onClose={() => {
-          setShowCreateRoomModal(false)
-          refetch()
-        }}
+        onClose={() => setShowCreateRoomModal(false)}
       />
     </div>
   )
