@@ -1,7 +1,9 @@
-import { useState } from 'react'
 import Modal from './Modal'
 import { createRoom } from '../api/rooms'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { type CreateRoomFormData, createRoomSchema } from '../schemas/room'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 interface CreateRoomModalProps {
   isOpen: boolean
@@ -9,13 +11,22 @@ interface CreateRoomModalProps {
 }
 
 function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
-  const [name, setName] = useState('')
   const queryClient = useQueryClient()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<CreateRoomFormData>({
+    resolver: zodResolver(createRoomSchema),
+    defaultValues: { name: '' },
+  })
 
   const mutation = useMutation({
     mutationFn: createRoom,
     onSuccess: () => {
-      setName('')
+      reset()
       onClose()
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
     },
@@ -24,28 +35,32 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
     },
   })
 
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    mutation.mutate(name)
+  const handleClose = () => {
+    reset()
+    onClose()
+  }
+
+  const onSubmit = (data: CreateRoomFormData) => {
+    mutation.mutate(data.name)
   }
 
   return (
     <Modal isOpen={isOpen} title="방 생성">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <input
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          {...register('name')}
           className="w-full px-4 py-3 border border-gray-300"
         />
+
+        {errors.name && (
+          <p className="pt-1 text-red-500">{errors.name.message}</p>
+        )}
 
         <div className="flex justify-end gap-2">
           <button
             type="button"
-            onClick={() => {
-              setName('')
-              onClose()
-            }}
+            onClick={handleClose}
             className="cursor-pointer px-3 py-2 hover:underline"
           >
             닫기
