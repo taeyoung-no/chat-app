@@ -66,9 +66,11 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
               {...register('username')}
               className="w-full px-4 py-3 border border-gray-300"
             />
-            {errors.username && (
-              <p className="pt-1 text-red-500">{errors.username.message}</p>
-            )}
+            <div className="min-h-6">
+              {errors.username && (
+                <p className="text-red-500">{errors.username.message}</p>
+              )}
+            </div>
           </div>
           <div>
             <h4>비밀번호</h4>
@@ -77,9 +79,11 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
               {...register('password')}
               className="w-full px-4 py-3 border border-gray-300"
             />
-            {errors.password && (
-              <p className="pt-1 text-red-500">{errors.password.message}</p>
-            )}
+            <div className="min-h-6">
+              {errors.password && (
+                <p className="text-red-500">{errors.password.message}</p>
+              )}
+            </div>
           </div>
         </div>
 

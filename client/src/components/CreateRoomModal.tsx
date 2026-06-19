@@ -52,10 +52,9 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
           {...register('name')}
           className="w-full px-4 py-3 border border-gray-300"
         />
-
-        {errors.name && (
-          <p className="pt-1 text-red-500">{errors.name.message}</p>
-        )}
+        <div className="min-h-6">
+          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+        </div>
 
         <div className="flex justify-end gap-2">
           <button
