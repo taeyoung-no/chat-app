@@ -1,6 +1,7 @@
 import { useState, type SubmitEventHandler } from 'react'
 import Modal from './Modal'
 import { login } from '../api/auth'
+import { useMutation } from '@tanstack/react-query'
 
 interface LoginModalProps {
   isOpen: boolean
@@ -11,17 +12,21 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleLogin: SubmitEventHandler<HTMLFormElement> = async (e) => {
-    if (e) e.preventDefault() // 새로고침 방지
-
-    try {
-      await login(username, password)
+  const mutation = useMutation({
+    mutationFn: () => login(username, password),
+    onSuccess: () => {
       setUsername('')
       setPassword('')
       onClose()
-    } catch (err: any) {
+    },
+    onError: (err: any) => {
       alert(err.message || '로그인 실패')
-    }
+    },
+  })
+
+  const handleLogin = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault() // 새로고침 방지
+    mutation.mutate()
   }
 
   return (
