@@ -25,3 +25,15 @@ export const getCurrentUser = async (): Promise<User> => {
     )
   }
 }
+
+export const logout = async () => {
+  try {
+    const res = await api.post('/auth/logout')
+    if (!res.data.success) throw new Error(res.data.message)
+    return res.data.user
+  } catch (err: any) {
+    throw new Error(
+      err.response?.data?.message || err.message || '로그아웃 실패'
+    )
+  }
+}

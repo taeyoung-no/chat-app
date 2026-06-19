@@ -1,13 +1,27 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import type { RootState } from '../store'
 import { useState } from 'react'
 import LoginModal from './LoginModal'
 import CreateRoomModal from './CreateRoomModal'
+import { useMutation } from '@tanstack/react-query'
+import { logout } from '../api/auth'
+import { setUser } from '../store/slices/authSlice'
 
 function Navbar() {
+    const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.auth.user)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
+
+  const mutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+        dispatch(setUser(null))
+    },
+    onError: (err: any) => {
+      alert(err.message || '로그아웃 실패')
+    },
+  })
 
   return (
     <>
@@ -37,7 +51,7 @@ function Navbar() {
             <div className="flex items-center gap-3">
               <span>{user.username}님</span>
               <button
-                onClick={() => setShowLoginModal(true)}
+                onClick={() => mutation.mutate()}
                 className="cursor-pointer hover:underline"
               >
                 로그아웃
