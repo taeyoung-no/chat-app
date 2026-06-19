@@ -1,27 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import './App.css'
 import LoginModal from './components/LoginModal'
 import CreateRoomModal from './components/CreateRoomModal'
-import { fetchRooms, type Room } from './api/rooms'
+import { fetchRooms } from './api/rooms'
+import { useQuery } from '@tanstack/react-query'
 
 function App() {
-  const [rooms, setRooms] = useState<Room[]>([])
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
 
-  const loadRooms = async () => {
-    try {
-      const data = await fetchRooms()
-      setRooms(data)
-    } catch (err: any) {
-      alert(err.message || '방 불러오기 실패')
-    }
-  }
+  const {
+    data: rooms = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['rooms'],
+    queryFn: fetchRooms,
+  })
 
-  useEffect(() => {
-    loadRooms()
-  }, [])
-
+  if (isLoading) return <div>방 불러오는 중...</div>
+  if (isError) return <div>{error?.message}</div>
   return (
     <div>
       <header className="border-b border-gray-200 mb-5">
@@ -67,7 +67,7 @@ function App() {
         isOpen={showCreateRoomModal}
         onClose={() => {
           setShowCreateRoomModal(false)
-          loadRooms()
+          refetch()
         }}
       />
     </div>
