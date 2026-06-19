@@ -8,7 +8,7 @@ interface LoginModalProps {
   onClose: () => void
 }
 
-interface User {
+interface Credentials {
     username: string
     password: string
 }
@@ -18,7 +18,7 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [password, setPassword] = useState('')
 
   const mutation = useMutation({
-    mutationFn: (user: User) => login(user.username, user.password),
+    mutationFn: (credentials: Credentials) => login(credentials.username, credentials.password),
     onSuccess: () => {
       setUsername('')
       setPassword('')
