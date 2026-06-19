@@ -19,8 +19,6 @@ function App() {
     queryFn: fetchRooms,
   })
 
-  if (isLoading) return <div>방 불러오는 중...</div>
-  if (isError) return <div>{error?.message}</div>
   return (
     <div>
       <header className="border-b border-gray-200 mb-5">
@@ -46,6 +44,9 @@ function App() {
           </button>
         </nav>
       </header>
+
+      {isLoading && <p className="text-center text-2xl">방 불러오는 중...</p>}
+      {isError && <p className="text-center text-2xl">{error?.message}</p>}
 
       <main className="max-w-2xl mx-auto space-y-5">
         {rooms.map((room) => (
