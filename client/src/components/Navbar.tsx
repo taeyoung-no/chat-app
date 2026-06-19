@@ -32,7 +32,7 @@ function Navbar() {
             <div className="flex items-center gap-2">
               <button className="cursor-pointer hover:underline">목록</button>
               <button
-                onClick={() => setShowCreateRoomModal(true)}
+                onClick={() => user ? setShowCreateRoomModal(true) : setShowLoginModal(true)}
                 className="cursor-pointer hover:underline"
               >
                 생성
