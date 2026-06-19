@@ -2,6 +2,8 @@ import { useState } from 'react'
 import Modal from './Modal'
 import { login } from '../api/auth'
 import { useMutation } from '@tanstack/react-query'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUser } from '../store/slices/authSlice'
 
 interface LoginModalProps {
   isOpen: boolean
@@ -9,17 +11,20 @@ interface LoginModalProps {
 }
 
 interface Credentials {
-    username: string
-    password: string
+  username: string
+  password: string
 }
 
 function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const mutation = useMutation({
-    mutationFn: (credentials: Credentials) => login(credentials.username, credentials.password),
-    onSuccess: () => {
+    mutationFn: (credentials: Credentials) =>
+      login(credentials.username, credentials.password),
+    onSuccess: (user) => {
+      dispatch(setUser(user))
       setUsername('')
       setPassword('')
       onClose()

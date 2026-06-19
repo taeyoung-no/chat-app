@@ -1,9 +1,5 @@
+import type { User } from "../types/user"
 import api from "./client"
-
-export interface User {
-  _id: string
-  username: string
-}
 
 export const login = async (
   username: string,

@@ -4,8 +4,12 @@ import LoginModal from './components/LoginModal'
 import CreateRoomModal from './components/CreateRoomModal'
 import { fetchRooms } from './api/rooms'
 import { useQuery } from '@tanstack/react-query'
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState } from './store'
 
 function App() {
+  const dispatch = useDispatch()
+  const user = useSelector((state: RootState) => state.auth.user)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
 
@@ -36,12 +40,24 @@ function App() {
             </div>
           </div>
 
-          <button
-            onClick={() => setShowLoginModal(true)}
-            className="cursor-pointer hover:underline"
-          >
-            로그인
-          </button>
+          {!user ? (
+            <button
+              onClick={() => setShowLoginModal(true)}
+              className="cursor-pointer hover:underline"
+            >
+              로그인
+            </button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <span>{user.username}님</span>
+              <button
+                onClick={() => setShowLoginModal(true)}
+                className="cursor-pointer hover:underline"
+              >
+                로그아웃
+              </button>
+            </div>
+          )}
         </nav>
       </header>
 
