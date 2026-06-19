@@ -2,8 +2,26 @@ import './App.css'
 import { fetchRooms } from './api/rooms'
 import { useQuery } from '@tanstack/react-query'
 import Navbar from './components/Navbar'
+import { useEffect } from 'react'
+import { getCurrentUser } from './api/auth'
+import { useDispatch } from 'react-redux'
+import { setUser } from './store/slices/authSlice'
 
 function App() {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const checkAuthState = async () => {
+      try {
+        const user = await getCurrentUser()
+        dispatch(setUser(user))
+      } catch (err: any) {
+        console.error(err.message || '유저 정보 조회 실패')
+      }
+    }
+    checkAuthState()
+  }, [])
+
   const {
     data: rooms = [],
     isLoading,
