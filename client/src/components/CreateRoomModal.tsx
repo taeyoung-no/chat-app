@@ -24,7 +24,7 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
     },
   })
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     mutation.mutate(name)
   }

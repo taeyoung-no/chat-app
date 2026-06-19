@@ -8,12 +8,17 @@ interface LoginModalProps {
   onClose: () => void
 }
 
+interface User {
+    username: string
+    password: string
+}
+
 function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const mutation = useMutation({
-    mutationFn: () => login(username, password),
+    mutationFn: (user: User) => login(user.username, user.password),
     onSuccess: () => {
       setUsername('')
       setPassword('')
@@ -24,9 +29,9 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
     },
   })
 
-  const handleLogin = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault() // 새로고침 방지
-    mutation.mutate()
+    mutation.mutate({ username, password })
   }
 
   return (
