@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Modal from './Modal'
 import { login } from '../api/auth'
 import { useMutation } from '@tanstack/react-query'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setUser } from '../store/slices/authSlice'
 
 interface LoginModalProps {

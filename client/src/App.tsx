@@ -4,11 +4,10 @@ import LoginModal from './components/LoginModal'
 import CreateRoomModal from './components/CreateRoomModal'
 import { fetchRooms } from './api/rooms'
 import { useQuery } from '@tanstack/react-query'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import type { RootState } from './store'
 
 function App() {
-  const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.auth.user)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
