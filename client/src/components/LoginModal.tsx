@@ -1,4 +1,4 @@
-import { useState, type SubmitEventHandler } from 'react'
+import { useState } from 'react'
 import Modal from './Modal'
 import { login } from '../api/auth'
 import { useMutation } from '@tanstack/react-query'
