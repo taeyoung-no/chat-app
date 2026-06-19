@@ -8,7 +8,7 @@ import { logout } from '../api/auth'
 import { setUser } from '../store/slices/authSlice'
 
 function Navbar() {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.auth.user)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
@@ -16,7 +16,7 @@ function Navbar() {
   const mutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-        dispatch(setUser(null))
+      dispatch(setUser(null))
     },
     onError: (err: any) => {
       alert(err.message || '로그아웃 실패')
