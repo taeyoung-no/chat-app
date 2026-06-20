@@ -39,7 +39,7 @@ function App() {
       {isLoading && <p className="text-center text-2xl">방 불러오는 중...</p>}
       {isError && <p className="text-center text-2xl">{error?.message}</p>}
 
-      <main className="max-w-2xl mx-auto space-y-5">
+      <main className="max-w-2xl mx-auto space-y-5 mb-5">
         {rooms.map((room) => (
           <div key={room._id} className="cursor-pointer group">
             <h4 className="text-2xl text-blue-800 group-hover:text-black group-hover:underline">
