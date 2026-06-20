@@ -6,6 +6,8 @@ import authRouter from './routes/auth.js'
 import roomRouter from './routes/room.js'
 import sessionMiddleware from './middleware/session.js'
 import errorHandler from './middleware/errorHandler.js'
+import { createServer } from 'http'
+import { Server, Socket } from 'socket.io'
 
 dotenv.config()
 
@@ -28,11 +30,32 @@ mongoose
   .then(() => console.log('[MongoDB] 연결 성공'))
   .catch((err) => console.log(`[MongoDB] ${err}`))
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.CLIENT_URL,
+  },
+})
+
+io.on('connection', (socket: Socket) => {
+  console.log(`${socket.id} 연결`)
+
+  socket.on('message', (msg: string) => {
+    console.log(`${socket.id} >> ${msg}`)
+    io.emit('message', msg)
+  })
+
+  socket.on('disconnect', () => {
+    console.log(`${socket.id} 연결 해제`)
+  })
 })
 
 const PORT = process.env.PORT
+
+httpServer.listen(PORT, () => {
+  console.log(`[Socket.IO] http://localhost:${PORT}`)
+})
+
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`)
 })
