@@ -6,6 +6,7 @@ import './index.css'
 import App from './App.tsx'
 import { store } from './store/index.ts'
 import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,8 +22,10 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <App />
-        <ReactQueryDevtools initialIsOpen={false} />
+        <BrowserRouter>
+          <App />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </BrowserRouter>
       </Provider>
     </QueryClientProvider>
   </StrictMode>
