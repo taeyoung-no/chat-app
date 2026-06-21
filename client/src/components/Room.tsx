@@ -13,6 +13,7 @@ interface Message {
 function Room() {
   const { id } = useParams()
   const [input, setInput] = useState('')
+  const [messages, setMessages] = useState<Message[]>([])
 
   const username = useSelector((state: RootState) => state.auth.user?.username)
 
@@ -20,7 +21,7 @@ function Room() {
     const socket: Socket = io(import.meta.env.VITE_API_URL)
     socket.emit('join', id)
     socket.on('message', (data: Message) => {
-      console.log(`${data.username} >> ${data.content}`)
+      setMessages((prev) => [...prev, data])
     })
 
     return () => {
@@ -40,7 +41,15 @@ function Room() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto">
+    <main className="max-w-2xl mx-auto h-[calc(100vh-120px)] flex flex-col">
+      <div className="flex-1 overflow-y-auto mb-5">
+        {messages.map((msg, i) => (
+          <div key={i} className="mb-3">
+            <div>{msg.username}</div>
+            <div className="text-xl">{msg.content}</div>
+          </div>
+        ))}
+      </div>
       <div className="flex items-center gap-4">
         <input
           type="text"
