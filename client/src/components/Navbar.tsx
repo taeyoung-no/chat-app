@@ -6,6 +6,7 @@ import CreateRoomModal from './CreateRoomModal'
 import { useMutation } from '@tanstack/react-query'
 import { logout } from '../api/auth'
 import { setUser } from '../store/slices/authSlice'
+import { Link } from 'react-router-dom'
 
 function Navbar() {
   const dispatch = useDispatch()
@@ -30,9 +31,13 @@ function Navbar() {
           <div className="flex items-center gap-4">
             <h1 className="text-2xl">Open Chatting</h1>
             <div className="flex items-center gap-2">
-              <button className="cursor-pointer hover:underline">목록</button>
+              <Link to="/" className="cursor-pointer hover:underline">
+                목록
+              </Link>
               <button
-                onClick={() => user ? setShowCreateRoomModal(true) : setShowLoginModal(true)}
+                onClick={() =>
+                  user ? setShowCreateRoomModal(true) : setShowLoginModal(true)
+                }
                 className="cursor-pointer hover:underline"
               >
                 생성
