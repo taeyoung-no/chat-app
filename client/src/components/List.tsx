@@ -23,7 +23,7 @@ function List() {
           <Link
             key={room._id}
             to={`/room/${room._id}`}
-            className="cursor-pointer group"
+            className="block cursor-pointer group"
           >
             <h4 className="text-2xl text-blue-800 group-hover:text-black group-hover:underline">
               {room.name}
