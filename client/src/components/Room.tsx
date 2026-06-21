@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Socket, io } from 'socket.io-client'
@@ -16,6 +16,7 @@ function Room() {
   const [messages, setMessages] = useState<Message[]>([])
 
   const username = useSelector((state: RootState) => state.auth.user?.username)
+  const messageEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const socket: Socket = io(import.meta.env.VITE_API_URL)
@@ -28,6 +29,10 @@ function Room() {
       socket.disconnect()
     }
   }, [id, username])
+
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView()
+  }, [messages])
 
   const sendMessage = () => {
     if (!input.trim()) return
@@ -47,6 +52,7 @@ function Room() {
           <div key={i} className="mb-3">
             <div>{msg.username}</div>
             <div className="text-xl">{msg.content}</div>
+            <div ref={messageEndRef} />
           </div>
         ))}
       </div>
