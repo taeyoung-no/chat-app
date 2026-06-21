@@ -24,13 +24,15 @@ function App() {
   }, [])
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
 
-      <Routes>
-        <Route path="/" element={<List />} />
-        <Route path="/room/:id" element={<Room />} />
-      </Routes>
+      <div className="flex-1 flex flex-col">
+        <Routes>
+          <Route path="/" element={<List />} />
+          <Route path="/room/:id" element={<Room />} />
+        </Routes>
+      </div>
     </div>
   )
 }

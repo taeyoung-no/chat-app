@@ -26,7 +26,7 @@ function Navbar() {
 
   return (
     <>
-      <header className="border-b border-gray-200 mb-5">
+      <header className="sticky top-0 bg-white border-b border-gray-200 mb-5">
         <nav className="max-w-2xl mx-auto py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl">Open Chatting</h1>

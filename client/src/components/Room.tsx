@@ -47,8 +47,8 @@ function Room() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto h-[calc(100vh-120px)] flex flex-col">
-      <div className="flex-1 overflow-y-auto mb-5">
+    <main className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
+      <div className="flex-1 overflow-y-auto">
         {messages.map((msg, i) => (
           <div key={i} className="mb-3">
             <div>{msg.username}</div>
@@ -57,7 +57,7 @@ function Room() {
           </div>
         ))}
       </div>
-      <div className="flex items-center gap-4">
+      <div className="sticky bottom-0 bg-white py-5 flex items-center gap-4">
         <input
           type="text"
           value={input}
