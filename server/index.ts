@@ -57,9 +57,5 @@ io.on('connection', (socket: Socket) => {
 const PORT = process.env.PORT
 
 httpServer.listen(PORT, () => {
-  console.log(`[Socket.IO] http://localhost:${PORT}`)
-})
-
-app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`)
 })
