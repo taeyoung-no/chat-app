@@ -17,9 +17,11 @@ function Room() {
 
   const username = useSelector((state: RootState) => state.auth.user?.username)
   const messageEndRef = useRef<HTMLDivElement>(null)
+  const socketRef = useRef<Socket>(null)
 
   useEffect(() => {
     const socket: Socket = io(import.meta.env.VITE_API_URL)
+    socketRef.current = socket
     socket.emit('join', id)
     socket.on('message', (data: Message) => {
       setMessages((prev) => [...prev, data])
@@ -35,9 +37,8 @@ function Room() {
   }, [messages])
 
   const sendMessage = () => {
-    if (!input.trim()) return
-    const socket: Socket = io(import.meta.env.VITE_API_URL)
-    socket.emit('message', {
+    if (!input.trim() || !socketRef.current) return
+    socketRef.current.emit('message', {
       roomId: id,
       username,
       content: input.trim(),
