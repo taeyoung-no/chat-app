@@ -40,9 +40,13 @@ const io = new Server(httpServer, {
 io.on('connection', (socket: Socket) => {
   console.log(`${socket.id} 연결`)
 
-  socket.on('message', (msg: string) => {
-    console.log(`${socket.id} >> ${msg}`)
-    io.emit('message', msg)
+  socket.on('join', (roomId: string) => {
+    socket.join(roomId)
+  })
+
+  socket.on('message', (data: Message) => {
+    console.log(`${data.username} >> ${data.content}`)
+    io.to(data.roomId).emit('message', data)
   })
 
   socket.on('disconnect', () => {

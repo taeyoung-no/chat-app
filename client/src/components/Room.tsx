@@ -1,23 +1,41 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { Socket, io } from 'socket.io-client'
+import type { RootState } from '../store'
 
-const socket: Socket = io(import.meta.env.VITE_API_URL)
+interface Message {
+  roomId: string
+  username: string
+  content: string
+}
 
 function Room() {
+  const { id } = useParams()
   const [input, setInput] = useState('')
 
+  const username = useSelector((state: RootState) => state.auth.user?.username)
+
   useEffect(() => {
-    socket.on('message', (msg: string) => {
-      console.log(`server >> ${msg}`)
+    const socket: Socket = io(import.meta.env.VITE_API_URL)
+    socket.emit('join', id)
+    socket.on('message', (data: Message) => {
+      console.log(`${data.username} >> ${data.content}`)
     })
+
     return () => {
-      socket.off('message')
+      socket.disconnect()
     }
-  }, [])
+  }, [id, username])
 
   const sendMessage = () => {
     if (!input.trim()) return
-    socket.emit('message', input.trim())
+    const socket: Socket = io(import.meta.env.VITE_API_URL)
+    socket.emit('message', {
+      roomId: id,
+      username,
+      content: input.trim(),
+    })
     setInput('')
   }
 
