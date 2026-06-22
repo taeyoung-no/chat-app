@@ -79,9 +79,9 @@ function Room() {
           >
             <div>{msg.username}</div>
             <div className="text-xl">{msg.content}</div>
-            <div ref={messageEndRef} />
           </div>
         ))}
+        <div ref={messageEndRef} />
       </div>
       <div className="sticky bottom-0 bg-white py-5 flex items-center gap-4">
         <input
