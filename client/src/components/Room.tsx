@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Socket, io } from 'socket.io-client'
 import type { RootState } from '../store'
 import { sendMessageSchema } from '../../../shared/schemas/message'
@@ -12,6 +12,7 @@ interface Message {
 }
 
 function Room() {
+  const navigate = useNavigate()
   const { id } = useParams()
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
@@ -30,6 +31,7 @@ function Room() {
       socket.emit('join', id)
     })
     socket.on('connect_error', (err: any) => {
+      navigate('/')
       alert(err.message || '연결 실패')
     })
     socket.on('messages', (data: Message[]) => {
