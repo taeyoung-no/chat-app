@@ -2,8 +2,12 @@ import Modal from './Modal'
 import { createRoom } from '../api/rooms'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { type CreateRoomFormData, createRoomSchema } from '../../../shared/schemas/room'
+import {
+  type CreateRoomFormData,
+  createRoomSchema,
+} from '../../../shared/schemas/room'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateRoomModalProps {
   isOpen: boolean
@@ -12,6 +16,7 @@ interface CreateRoomModalProps {
 
 function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const {
     register,
@@ -25,10 +30,11 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
 
   const mutation = useMutation({
     mutationFn: createRoom,
-    onSuccess: () => {
+    onSuccess: (room) => {
       reset()
       onClose()
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
+      navigate(`room/${room._id}`)
     },
     onError: (err: any) => {
       alert(err.message || '방 생성 실패')
