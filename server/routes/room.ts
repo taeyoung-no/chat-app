@@ -1,16 +1,16 @@
 import express from 'express'
 import isAuthenticated from '../middleware/auth'
 import Room from '../models/Rooms'
-import AppError from '../utils/AppError'
+import { createRoomSchema } from '../../shared/schemas/room'
+import validate from '../utils/validate'
 
 const router = express.Router()
 
 router.post('/', isAuthenticated, async (req, res, next) => {
   try {
-    const { name } = req.body
-    if (!name?.trim()) return next(new AppError('방 이름 입력하세요', 400))
+    const { name } = validate(createRoomSchema, req.body)
 
-    const room = await Room.create({ name: name.trim() })
+    const room = await Room.create({ name })
     res.status(201).json({
       success: true,
       message: '채팅방 생성 성공',

@@ -2,7 +2,7 @@ import Modal from './Modal'
 import { createRoom } from '../api/rooms'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { type CreateRoomFormData, createRoomSchema } from '../schemas/room'
+import { type CreateRoomFormData, createRoomSchema } from '../../../shared/schemas/room'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 interface CreateRoomModalProps {

@@ -3,19 +3,21 @@ import bcrypt from 'bcrypt'
 import User from '../models/Users'
 import isAuthenticated from '../middleware/auth'
 import AppError from '../utils/AppError'
+import { loginSchema, registerSchema } from '../../shared/schemas/auth'
+import validate from '../utils/validate'
 
 const router = express.Router()
 
 router.post('/register', async (req, res, next) => {
   try {
-    const { username, password } = req.body
+    const { username, password } = validate(registerSchema, req.body)
 
-    const existingUser = await User.findOne({ username: username })
+    const existingUser = await User.findOne({ username })
     if (existingUser) return next(new AppError('username 중복임', 400))
 
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await User.create({
-      username: username,
+      username,
       password: hashedPassword,
     })
 
@@ -34,9 +36,9 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
   try {
-    const { username, password } = req.body
+    const { username, password } = validate(loginSchema, req.body)
 
-    const user = await User.findOne({ username: username })
+    const user = await User.findOne({ username })
     if (!user) return next(new AppError('뭔가 잘못 입력함', 400))
 
     const isMatch = await bcrypt.compare(password, user.password)
