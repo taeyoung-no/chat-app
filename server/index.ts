@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io'
 import validate from './utils/validate.js'
 import { sendMessageSchema } from '../shared/schemas/message.js'
 import Message from './models/Message.js'
+import Rooms from './models/Rooms.js'
 
 dotenv.config()
 
@@ -86,8 +87,20 @@ io.on('connection', (socket: Socket) => {
     }
   })
 
-  socket.on('disconnect', () => {
-    console.log(`${socket.id} 연결 해제`)
+  socket.on('disconnecting', () => {
+    socket.data.roomId = Array.from(socket.rooms).filter((r) => r !== socket.id)[0]
+  })
+
+  socket.on('disconnect', async () => {
+    const roomId = socket.data.roomId
+    console.log(`${roomId}에서 한 명 나감`)
+    try {
+      const size = io.sockets.adapter.rooms.get(roomId)?.size ?? 0
+      console.log(size)
+      if (size === 0) await Rooms.deleteOne({ _id: roomId })
+    } catch (err: any) {
+      console.error(err.message || `${roomId} 삭제 실패`)
+    }
   })
 })
 
