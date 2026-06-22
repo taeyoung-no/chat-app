@@ -7,10 +7,12 @@ import { useMutation } from '@tanstack/react-query'
 import { logout } from '../api/auth'
 import { setUser } from '../store/slices/authSlice'
 import { Link } from 'react-router-dom'
+import RegisterModal from './RegisterModal'
 
 function Navbar() {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.auth.user)
+  const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
 
@@ -46,12 +48,20 @@ function Navbar() {
           </div>
 
           {!user ? (
-            <button
-              onClick={() => setShowLoginModal(true)}
-              className="cursor-pointer hover:underline"
-            >
-              로그인
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowRegisterModal(true)}
+                className="cursor-pointer hover:underline"
+              >
+                회원가입
+              </button>
+              <button
+                onClick={() => setShowLoginModal(true)}
+                className="cursor-pointer hover:underline"
+              >
+                로그인
+              </button>
+            </div>
           ) : (
             <div className="flex items-center gap-3">
               <span>{user.username}님</span>
@@ -65,6 +75,11 @@ function Navbar() {
           )}
         </nav>
       </header>
+
+      <RegisterModal
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+      />
 
       <LoginModal
         isOpen={showLoginModal}
