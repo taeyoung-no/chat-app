@@ -71,7 +71,10 @@ function Room() {
     <main className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
       <div className="flex-1 overflow-y-auto">
         {messages.map((msg, i) => (
-          <div key={i} className="mb-3">
+          <div
+            key={i}
+            className={`mb-3 ${username === msg.username ? 'text-right' : 'text-left'}`}
+          >
             <div>{msg.username}</div>
             <div className="text-xl">{msg.content}</div>
             <div ref={messageEndRef} />
