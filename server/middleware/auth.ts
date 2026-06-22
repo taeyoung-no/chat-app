@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import CustomError from '../utils/CustomError'
+import AppError from '../utils/AppError'
 
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.session.userId) return next(new CustomError('로그인부터 하세요', 401))
+  if (!req.session.userId) return next(new AppError('로그인부터 하세요', 401))
   next()
 }
 

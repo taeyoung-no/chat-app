@@ -1,14 +1,14 @@
 import express from 'express'
 import isAuthenticated from '../middleware/auth'
 import Room from '../models/Rooms'
-import CustomError from '../utils/CustomError'
+import AppError from '../utils/AppError'
 
 const router = express.Router()
 
 router.post('/', isAuthenticated, async (req, res, next) => {
   try {
     const { name } = req.body
-    if (!name?.trim()) return next(new CustomError('방 이름 입력하세요', 400))
+    if (!name?.trim()) return next(new AppError('방 이름 입력하세요', 400))
 
     const room = await Room.create({ name: name.trim() })
     res.status(201).json({

@@ -2,7 +2,7 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import User from '../models/Users'
 import isAuthenticated from '../middleware/auth'
-import CustomError from '../utils/CustomError'
+import AppError from '../utils/AppError'
 
 const router = express.Router()
 
@@ -11,7 +11,7 @@ router.post('/register', async (req, res, next) => {
     const { username, password } = req.body
 
     const existingUser = await User.findOne({ username: username })
-    if (existingUser) return next(new CustomError('username 중복임', 400))
+    if (existingUser) return next(new AppError('username 중복임', 400))
 
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await User.create({
@@ -37,10 +37,10 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body
 
     const user = await User.findOne({ username: username })
-    if (!user) return next(new CustomError('뭔가 잘못 입력함', 400))
+    if (!user) return next(new AppError('뭔가 잘못 입력함', 400))
 
     const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) return next(new CustomError('뭔가 잘못 입력함', 400))
+    if (!isMatch) return next(new AppError('뭔가 잘못 입력함', 400))
 
     req.session.userId = user._id.toString()
     req.session.username = user.username
@@ -59,7 +59,7 @@ router.post('/login', async (req, res, next) => {
 })
 
 router.post('/logout', (req, res, next) => {
-  if (!req.session.userId) return next(new CustomError('로그인부터 하세요', 401))
+  if (!req.session.userId) return next(new AppError('로그인부터 하세요', 401))
 
   req.session.destroy((err) => {
     if (err) return next(err)
