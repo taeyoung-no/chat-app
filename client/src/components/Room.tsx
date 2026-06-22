@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Socket, io } from 'socket.io-client'
 import type { RootState } from '../store'
+import { sendMessageSchema } from '../../../shared/schemas/message'
 
 interface Message {
   roomId: string
@@ -20,11 +21,22 @@ function Room() {
   const socketRef = useRef<Socket>(null)
 
   useEffect(() => {
-    const socket: Socket = io(import.meta.env.VITE_API_URL)
+    const socket: Socket = io(import.meta.env.VITE_API_URL, {
+      withCredentials: true,
+    })
     socketRef.current = socket
-    socket.emit('join', id)
+
+    socket.on('connect', () => {
+      socket.emit('join', id)
+    })
+    socket.on('connect_error', (err: any) => {
+      alert(err.message || '연결 실패')
+    })
     socket.on('message', (data: Message) => {
       setMessages((prev) => [...prev, data])
+    })
+    socket.on('error', (err: any) => {
+      alert(err.message || '서버 에러인 듯')
     })
 
     return () => {
@@ -37,12 +49,18 @@ function Room() {
   }, [messages])
 
   const sendMessage = () => {
-    if (!input.trim() || !socketRef.current) return
-    socketRef.current.emit('message', {
+    if (!socketRef.current) return
+
+    const result = sendMessageSchema.safeParse({
       roomId: id,
-      username,
-      content: input.trim(),
+      content: input,
     })
+    if (!result.success) {
+      alert(result.error.issues[0]?.message || '똑바로 입력하세요')
+      return
+    }
+
+    socketRef.current.emit('message', result.data)
     setInput('')
   }
 

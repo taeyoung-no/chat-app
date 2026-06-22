@@ -8,6 +8,9 @@ import sessionMiddleware from './middleware/session.js'
 import errorHandler from './middleware/errorHandler.js'
 import { createServer } from 'http'
 import { Server, Socket } from 'socket.io'
+import validate from './utils/validate.js'
+import { sendMessageSchema } from '../shared/schemas/message.js'
+import Message from './models/Message.js'
 
 dotenv.config()
 
@@ -34,7 +37,24 @@ const httpServer = createServer(app)
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.CLIENT_URL,
+    credentials: true,
   },
+})
+
+io.use((socket, next) => {
+  const req = socket.request as express.Request & { session: any }
+
+  sessionMiddleware(req, {} as any, (err) => {
+    if (err) return next(new Error('Session error'))
+
+    if (req.session?.userId) {
+      socket.data.userId = req.session.userId
+      socket.data.username = req.session.username
+      next()
+    } else {
+      next(new Error('로그인부터 하세요'))
+    }
+  })
 })
 
 io.on('connection', (socket: Socket) => {
@@ -44,9 +64,19 @@ io.on('connection', (socket: Socket) => {
     socket.join(roomId)
   })
 
-  socket.on('message', (data: Message) => {
-    console.log(`${data.username} >> ${data.content}`)
-    io.to(data.roomId).emit('message', data)
+  socket.on('message', async (data) => {
+    try {
+      const { roomId, content } = validate(sendMessageSchema, data)
+      const message = await Message.create({
+        roomId,
+        username: socket.data.username,
+        content,
+      })
+      console.log(`${socket.data.username} >> ${content}`)
+      io.to(roomId).emit('message', message)
+    } catch (err: any) {
+      socket.emit('error', { message: err.message || '메시지 전송 실패' })
+    }
   })
 
   socket.on('disconnect', () => {

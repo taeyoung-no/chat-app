@@ -5,4 +5,4 @@ const roomSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 })
 
-export default mongoose.model('room', roomSchema)
+export default mongoose.model('Room', roomSchema)
