@@ -32,6 +32,9 @@ function Room() {
     socket.on('connect_error', (err: any) => {
       alert(err.message || '연결 실패')
     })
+    socket.on('messages', (data: Message[]) => {
+      setMessages(data)
+    })
     socket.on('message', (data: Message) => {
       setMessages((prev) => [...prev, data])
     })

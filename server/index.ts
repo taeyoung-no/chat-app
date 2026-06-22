@@ -60,8 +60,15 @@ io.use((socket, next) => {
 io.on('connection', (socket: Socket) => {
   console.log(`${socket.id} 연결`)
 
-  socket.on('join', (roomId: string) => {
+  socket.on('join', async (roomId: string) => {
     socket.join(roomId)
+
+    try {
+      const messages = await Message.find({ roomId })
+      socket.emit('messages', messages)
+    } catch (err: any) {
+      socket.emit('error', { message: err.message || '메시지 불러오기 실패' })
+    }
   })
 
   socket.on('message', async (data) => {
