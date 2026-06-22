@@ -6,11 +6,12 @@ import CreateRoomModal from './CreateRoomModal'
 import { useMutation } from '@tanstack/react-query'
 import { logout } from '../api/auth'
 import { setUser } from '../store/slices/authSlice'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import RegisterModal from './RegisterModal'
 
 function Navbar() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.auth.user)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
@@ -19,6 +20,7 @@ function Navbar() {
   const mutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      navigate('/')
       dispatch(setUser(null))
     },
     onError: (err: any) => {

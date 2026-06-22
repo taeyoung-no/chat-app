@@ -45,7 +45,7 @@ function Room() {
     return () => {
       socket.disconnect()
     }
-  }, [id, username])
+  }, [id])
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView()
