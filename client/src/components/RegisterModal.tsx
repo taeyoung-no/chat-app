@@ -1,5 +1,5 @@
 import Modal from './Modal'
-import { login, registerUser } from '../api/auth'
+import { registerUser } from '../api/auth'
 import { useMutation } from '@tanstack/react-query'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../store/slices/authSlice'
