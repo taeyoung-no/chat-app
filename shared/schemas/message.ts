@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const messageSchema = z.object({
   _id: z.string(),
+  roomId: z.string(),
   username: z.string(),
   content: z.string(),
   createdAt: z.date(),
