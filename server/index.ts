@@ -59,14 +59,12 @@ io.use((socket, next) => {
 })
 
 io.on('connection', (socket: Socket) => {
-  console.log(`${socket.id} 연결`)
-
   socket.on('join', async (roomId: string) => {
     socket.join(roomId)
-
     try {
       const messages = await Message.find({ roomId })
       socket.emit('messages', messages)
+      io.emit('joined')
     } catch (err: any) {
       socket.emit('error', { message: err.message || '메시지 불러오기 실패' })
     }
@@ -80,24 +78,20 @@ io.on('connection', (socket: Socket) => {
         username: socket.data.username,
         content,
       })
-      console.log(`${socket.data.username} >> ${content}`)
       io.to(roomId).emit('message', message)
     } catch (err: any) {
       socket.emit('error', { message: err.message || '메시지 전송 실패' })
     }
   })
 
-  socket.on('disconnecting', () => {
-    socket.data.roomId = Array.from(socket.rooms).filter((r) => r !== socket.id)[0]
-  })
-
-  socket.on('disconnect', async () => {
-    const roomId = socket.data.roomId
-    console.log(`${roomId}에서 한 명 나감`)
+  socket.on('leave', async (roomId: string) => {
+    socket.leave(roomId)
     try {
       const size = io.sockets.adapter.rooms.get(roomId)?.size ?? 0
-      console.log(size)
-      if (size === 0) await Rooms.deleteOne({ _id: roomId })
+      if (size === 0) {
+        await Rooms.deleteOne({ _id: roomId })
+        io.emit('delete')
+      }
     } catch (err: any) {
       console.error(err.message || `${roomId} 삭제 실패`)
     }

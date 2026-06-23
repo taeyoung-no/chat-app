@@ -1,8 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchRooms } from '../api/rooms'
 import { Link } from 'react-router-dom'
+import { useSocket } from '../contexts/SocketContext'
+import { useEffect } from 'react'
 
 function List() {
+  const socket = useSocket()
+  const queryClient = useQueryClient()
+
   const {
     data: rooms = [],
     isLoading,
@@ -12,6 +17,20 @@ function List() {
     queryKey: ['rooms'],
     queryFn: fetchRooms,
   })
+
+  useEffect(() => {
+    if (!socket) return
+    socket.on('joined', () => {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] })
+    })
+    socket.on('delete', () => {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] })
+    })
+    return () => {
+      socket.off('joined')
+      socket.off('delete')
+    }
+  }, [socket, queryClient])
 
   return (
     <main>

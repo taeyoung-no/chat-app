@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Socket, io } from 'socket.io-client'
 import type { RootState } from '../store'
 import { sendMessageSchema } from '../../../shared/schemas/message'
+import { useSocket } from '../contexts/SocketContext'
 
 interface Message {
   roomId: string
@@ -12,6 +12,7 @@ interface Message {
 }
 
 function Room() {
+  const socket = useSocket()
   const navigate = useNavigate()
   const { id } = useParams()
   const [input, setInput] = useState('')
@@ -19,17 +20,12 @@ function Room() {
 
   const username = useSelector((state: RootState) => state.auth.user?.username)
   const messageEndRef = useRef<HTMLDivElement>(null)
-  const socketRef = useRef<Socket>(null)
 
   useEffect(() => {
-    const socket: Socket = io(import.meta.env.VITE_API_URL, {
-      withCredentials: true,
-    })
-    socketRef.current = socket
+    if (!socket) return
 
-    socket.on('connect', () => {
-      socket.emit('join', id)
-    })
+    socket.emit('join', id)
+
     socket.on('connect_error', (err: any) => {
       navigate('/')
       alert(err.message || '연결 실패')
@@ -45,16 +41,19 @@ function Room() {
     })
 
     return () => {
-      socket.disconnect()
+      socket.emit('leave', id)
+      socket.off('messages')
+      socket.off('message')
+      socket.off('error')
     }
-  }, [id])
+  }, [socket, id])
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView()
   }, [messages])
 
   const sendMessage = () => {
-    if (!socketRef.current) return
+    if (!socket) return
 
     const result = sendMessageSchema.safeParse({
       roomId: id,
@@ -65,7 +64,7 @@ function Room() {
       return
     }
 
-    socketRef.current.emit('message', result.data)
+    socket.emit('message', result.data)
     setInput('')
   }
 
