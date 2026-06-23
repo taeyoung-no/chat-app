@@ -65,7 +65,6 @@ io.on('connection', (socket: Socket) => {
     try {
       const messages = await Message.find({ roomId })
       socket.emit('messages', messages)
-      io.emit('joined')
     } catch (err: any) {
       socket.emit('error', { message: err.message || '메시지 불러오기 실패' })
     }
@@ -82,19 +81,6 @@ io.on('connection', (socket: Socket) => {
       io.to(roomId).emit('message', message)
     } catch (err: any) {
       socket.emit('error', { message: err.message || '메시지 전송 실패' })
-    }
-  })
-
-  socket.on('leave', async (roomId: string) => {
-    socket.leave(roomId)
-    try {
-      const size = io.sockets.adapter.rooms.get(roomId)?.size ?? 0
-      if (size === 0) {
-        // await Room.deleteOne({ _id: roomId })
-        // io.emit('delete')
-      }
-    } catch (err: any) {
-      console.error(err.message || `${roomId} 삭제 실패`)
     }
   })
 })

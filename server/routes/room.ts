@@ -17,6 +17,7 @@ router.post('/', isAuthenticated, async (req, res, next) => {
       message: '채팅방 생성 성공',
       room,
     })
+    req.app.get('io')?.emit('create')
   } catch (err) {
     next(err)
   }

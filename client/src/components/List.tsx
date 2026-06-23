@@ -31,14 +31,14 @@ function List() {
 
   useEffect(() => {
     if (!socket) return
-    socket.on('joined', () => {
+    socket.on('create', () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
     })
     socket.on('delete', () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
     })
     return () => {
-      socket.off('joined')
+      socket.off('create')
       socket.off('delete')
     }
   }, [socket, queryClient])
