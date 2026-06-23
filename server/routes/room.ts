@@ -1,6 +1,6 @@
 import express from 'express'
 import isAuthenticated from '../middleware/auth'
-import Room from '../models/Rooms'
+import Room from '../models/Room'
 import { createRoomSchema } from '../../shared/schemas/room'
 import validate from '../utils/validate'
 

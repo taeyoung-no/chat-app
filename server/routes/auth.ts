@@ -1,6 +1,6 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
-import User from '../models/Users'
+import User from '../models/User'
 import isAuthenticated from '../middleware/auth'
 import AppError from '../utils/AppError'
 import { loginSchema, registerSchema } from '../../shared/schemas/auth'
