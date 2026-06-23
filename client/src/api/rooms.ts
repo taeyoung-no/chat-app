@@ -1,10 +1,5 @@
+import type { Room } from '../../../shared/schemas/room'
 import api from './client'
-
-export interface Room {
-  _id: string
-  name: string
-  createdAt: string
-}
 
 export const fetchRooms = async (): Promise<Room[]> => {
   try {
