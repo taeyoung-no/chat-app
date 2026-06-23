@@ -1,12 +1,12 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { User } from "../../types/user"
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import type { User } from '../../../../shared/schemas/auth'
 
 interface AuthState {
   user: User | null
 }
 
 const initialState: AuthState = {
-  user: null
+  user: null,
 }
 
 const authSlice = createSlice({
@@ -16,7 +16,7 @@ const authSlice = createSlice({
     setUser: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload
     },
-  }
+  },
 })
 
 export const { setUser } = authSlice.actions
