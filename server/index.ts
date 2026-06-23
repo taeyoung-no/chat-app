@@ -41,6 +41,8 @@ const io = new Server(httpServer, {
   },
 })
 
+app.set('io', io)
+
 io.use((socket, next) => {
   const req = socket.request as express.Request & { session: any }
 

@@ -46,6 +46,7 @@ router.delete('/:id', isAuthenticated, async (req, res, next) => {
     await Room.deleteOne({ _id: id })
     await Message.deleteMany({ roomId: id })
     res.status(200).json({ success: true, message: '방 삭제 성공' })
+    req.app.get('io')?.emit('delete')
   } catch (err) {
     next(err)
   }
