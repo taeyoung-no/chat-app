@@ -61,7 +61,7 @@ function List() {
             </Link>
             <button
               onClick={() => handleDelete(room._id)}
-              className="hover:underline"
+              className="cursor-pointer hover:underline"
             >
               삭제
             </button>
