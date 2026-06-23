@@ -4,12 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import type { RootState } from '../store'
 import { sendMessageSchema } from '../../../shared/schemas/message'
 import { useSocket } from '../contexts/SocketContext'
-
-interface Message {
-  roomId: string
-  username: string
-  content: string
-}
+import type { Message } from '../../../shared/schemas/message'
 
 function Room() {
   const socket = useSocket()
