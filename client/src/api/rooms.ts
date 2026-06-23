@@ -29,3 +29,15 @@ export const createRoom = async (name: string): Promise<Room> => {
     )
   }
 }
+
+export const deleteRoom = async (id: string) => {
+  try {
+    const res = await api.delete(`/room/${id}`)
+    if (!res.data.success) throw new Error(res.data.message)
+    return
+  } catch (err: any) {
+    throw new Error(
+      err.response?.data?.message || err.message || '방 삭제 실패'
+    )
+  }
+}

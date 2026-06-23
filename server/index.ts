@@ -11,7 +11,6 @@ import { Server, Socket } from 'socket.io'
 import validate from './utils/validate.js'
 import { sendMessageSchema } from '../shared/schemas/message.js'
 import Message from './models/Message.js'
-import Room from './models/Room.js'
 
 dotenv.config()
 
@@ -89,8 +88,8 @@ io.on('connection', (socket: Socket) => {
     try {
       const size = io.sockets.adapter.rooms.get(roomId)?.size ?? 0
       if (size === 0) {
-        await Room.deleteOne({ _id: roomId })
-        io.emit('delete')
+        // await Room.deleteOne({ _id: roomId })
+        // io.emit('delete')
       }
     } catch (err: any) {
       console.error(err.message || `${roomId} 삭제 실패`)
