@@ -1,14 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { deleteRoom, fetchRooms } from '../api/rooms'
 import { Link } from 'react-router-dom'
-import { useSocket } from '../contexts/SocketContext'
-import { useEffect } from 'react'
+
 import { useSelector } from 'react-redux'
 import type { RootState } from '../store'
 
 function List() {
-  const socket = useSocket()
-  const queryClient = useQueryClient()
   const user = useSelector((state: RootState) => state.auth.user)
 
   const {
@@ -31,20 +28,6 @@ function List() {
   const handleDelete = (roomId: string) => {
     deleteMutation.mutate(roomId)
   }
-
-  useEffect(() => {
-    if (!socket) return
-    socket.on('create', () => {
-      queryClient.invalidateQueries({ queryKey: ['rooms'] })
-    })
-    socket.on('delete', () => {
-      queryClient.invalidateQueries({ queryKey: ['rooms'] })
-    })
-    return () => {
-      socket.off('create')
-      socket.off('delete')
-    }
-  }, [socket, queryClient])
 
   return (
     <main>
