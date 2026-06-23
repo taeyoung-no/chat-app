@@ -3,10 +3,13 @@ import { deleteRoom, fetchRooms } from '../api/rooms'
 import { Link } from 'react-router-dom'
 import { useSocket } from '../contexts/SocketContext'
 import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import type { RootState } from '../store'
 
 function List() {
   const socket = useSocket()
   const queryClient = useQueryClient()
+  const user = useSelector((state: RootState) => state.auth.user)
 
   const {
     data: rooms = [],
@@ -59,12 +62,14 @@ function List() {
                 {room.name}
               </h4>
             </Link>
-            <button
-              onClick={() => handleDelete(room._id)}
-              className="cursor-pointer hover:underline"
-            >
-              삭제
-            </button>
+            {room.username === user?.username && (
+              <button
+                onClick={() => handleDelete(room._id)}
+                className="cursor-pointer hover:underline"
+              >
+                삭제
+              </button>
+            )}
           </div>
         ))}
       </div>
