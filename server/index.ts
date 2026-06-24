@@ -1,33 +1,13 @@
 import express from 'express'
-import cors from 'cors'
-import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-import authRouter from './routes/auth.js'
-import roomRouter from './routes/room.js'
 import sessionMiddleware from './middleware/session.js'
-import errorHandler from './middleware/errorHandler.js'
 import { createServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import validate from './utils/validate.js'
 import { sendMessageSchema } from '../shared/schemas/message.js'
 import type { Message } from '../shared/schemas/message.js'
 import Messages from './models/Message.js'
-
-dotenv.config()
-
-const app = express()
-
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-)
-app.use(express.json())
-app.use(sessionMiddleware)
-app.use('/auth', authRouter)
-app.use('/room', roomRouter)
-app.use(errorHandler)
+import app from './app.js'
 
 mongoose
   .connect(process.env.MONGODB_URI!)

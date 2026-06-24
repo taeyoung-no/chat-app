@@ -3,7 +3,7 @@ import AppError from "./AppError";
 
 function validate<T>(schema: ZodType<T>, data: unknown) {
   const res = schema.safeParse(data)
-  if (!res.success) throw new AppError(res.error.message || '똑바로 입력하세요')
+  if (!res.success) throw new AppError(res.error.message || '똑바로 입력하세요', 400)
   return res.data
 }
 
