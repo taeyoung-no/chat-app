@@ -200,4 +200,54 @@ describe('Socket / Message', () => {
     client1.close()
     client2.close()
   })
+
+  it('messages 이벤트 수신', async () => {
+    const agent = request.agent(app)
+    await agent.post('/auth/register').send({ username: 'username', password: 'password' })
+    const loginRes = await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+
+    const cookies = loginRes.headers['set-cookie']
+    const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
+
+    const client1 = Client(url, {
+      withCredentials: true,
+      extraHeaders: { Cookie: cookieHeader },
+    })
+
+    await new Promise<void>((resolve) => {
+      client1.on('connect', resolve)
+    })
+
+    const createRes = await agent.post('/room').send({ name: 'room' })
+    const roomId = createRes.body.room._id
+
+    client1.emit('join', roomId)
+    await new Promise((resolve) => client1.once('messages', resolve))
+
+    client1.emit('message', { roomId, content: 'Hello World!' })
+    await new Promise((resolve) => client1.once('message', resolve))
+
+    const client2 = Client(url, {
+      withCredentials: true,
+      extraHeaders: { Cookie: cookieHeader },
+    })
+
+    await new Promise<void>((resolve) => {
+      client2.on('connect', resolve)
+    })
+
+    client2.emit('join', roomId)
+
+    const history = await new Promise<any[]>((resolve) => {
+      client2.once('messages', resolve)
+    })
+
+    expect(history.length).toBe(1)
+    expect(history[0].content).toBe('Hello World!')
+    expect(history[0].username).toBe('username')
+    expect(history[0]).toHaveProperty('_id')
+
+    client1.close()
+    client2.close()
+  })
 })
