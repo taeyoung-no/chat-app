@@ -36,7 +36,6 @@ function Room() {
     })
 
     return () => {
-      socket.emit('leave', id)
       socket.off('messages')
       socket.off('message')
       socket.off('error')
