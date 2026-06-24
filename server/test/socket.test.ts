@@ -149,4 +149,55 @@ describe('Socket / Message', () => {
 
     client.close()
   })
+
+  it('메시지 브로드캐스트', async () => {
+    const agent1 = request.agent(app)
+    await agent1.post('/auth/register').send({ username: 'username', password: 'password' })
+    const login1 = await agent1.post('/auth/login').send({ username: 'username', password: 'password' })
+    const cookies1 = login1.headers['set-cookie']
+    const cookieHeader1 = Array.isArray(cookies1) ? cookies1.join('; ') : cookies1 || ''
+
+    const agent2 = request.agent(app)
+    await agent2.post('/auth/register').send({ username: 'other', password: 'password' })
+    const login2 = await agent2.post('/auth/login').send({ username: 'other', password: 'password' })
+    const cookies2 = login2.headers['set-cookie']
+    const cookieHeader2 = Array.isArray(cookies2) ? cookies2.join('; ') : cookies2 || ''
+
+    const client1 = Client(url, {
+      withCredentials: true,
+      extraHeaders: { Cookie: cookieHeader1 },
+    })
+    const client2 = Client(url, {
+      withCredentials: true,
+      extraHeaders: { Cookie: cookieHeader2 },
+    })
+
+    await Promise.all([
+      new Promise<void>((resolve) => client1.on('connect', resolve)),
+      new Promise<void>((resolve) => client2.on('connect', resolve)),
+    ])
+
+    const createRes = await agent1.post('/room').send({ name: 'room' })
+    const roomId = createRes.body.room._id
+
+    client1.emit('join', roomId)
+    client2.emit('join', roomId)
+
+    await Promise.all([
+      new Promise((resolve) => client1.once('messages', resolve)),
+      new Promise((resolve) => client2.once('messages', resolve)),
+    ])
+
+    client1.emit('message', { roomId, content: 'Hello World!' })
+
+    const received = await new Promise<any>((resolve) => {
+      client2.once('message', resolve)
+    })
+
+    expect(received.content).toBe('Hello World!')
+    expect(received.username).toBe('username')
+
+    client1.close()
+    client2.close()
+  })
 })
