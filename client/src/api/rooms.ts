@@ -7,9 +7,7 @@ export const fetchRooms = async (): Promise<Room[]> => {
     if (!res.data.success) throw new Error(res.data.message)
     return res.data.rooms
   } catch (err: any) {
-    throw new Error(
-      err.response?.data?.message || err.message || '방 불러오기 실패'
-    )
+    throw new Error(err.response?.data?.message || err.message || '방 불러오기 실패')
   }
 }
 
@@ -19,9 +17,7 @@ export const createRoom = async (name: string): Promise<Room> => {
     if (!res.data.success) throw new Error(res.data.message)
     return res.data.room
   } catch (err: any) {
-    throw new Error(
-      err.response?.data?.message || err.message || '방 생성 실패'
-    )
+    throw new Error(err.response?.data?.message || err.message || '방 생성 실패')
   }
 }
 
@@ -31,8 +27,6 @@ export const deleteRoom = async (id: string) => {
     if (!res.data.success) throw new Error(res.data.message)
     return
   } catch (err: any) {
-    throw new Error(
-      err.response?.data?.message || err.message || '방 삭제 실패'
-    )
+    throw new Error(err.response?.data?.message || err.message || '방 삭제 실패')
   }
 }

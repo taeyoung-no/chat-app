@@ -66,10 +66,7 @@ function Room() {
     <main className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
       <div className="flex-1 overflow-y-auto">
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`mb-3 ${username === msg.username ? 'text-right' : 'text-left'}`}
-          >
+          <div key={i} className={`mb-3 ${username === msg.username ? 'text-right' : 'text-left'}`}>
             <div>{msg.username}</div>
             <div className="text-xl">{msg.content}</div>
           </div>
@@ -86,10 +83,7 @@ function Room() {
           }}
           className="w-full border border-gray-300 px-4 py-3"
         />
-        <button
-          onClick={sendMessage}
-          className="flex-shrink-0 cursor-pointer px-3 py-2 hover:underline"
-        >
+        <button onClick={sendMessage} className="flex-shrink-0 cursor-pointer px-3 py-2 hover:underline">
           전송
         </button>
       </div>

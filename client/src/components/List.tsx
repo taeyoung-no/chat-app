@@ -37,19 +37,11 @@ function List() {
       <div className="max-w-2xl mx-auto space-y-5 mb-5">
         {rooms.map((room) => (
           <div key={room._id} className="flex items-center">
-            <Link
-              to={`/room/${room._id}`}
-              className="flex-1 block cursor-pointer group"
-            >
-              <h4 className="text-2xl text-blue-800 group-hover:text-black group-hover:underline">
-                {room.name}
-              </h4>
+            <Link to={`/room/${room._id}`} className="flex-1 block cursor-pointer group">
+              <h4 className="text-2xl text-blue-800 group-hover:text-black group-hover:underline">{room.name}</h4>
             </Link>
             {room.username === user?.username && (
-              <button
-                onClick={() => handleDelete(room._id)}
-                className="cursor-pointer hover:underline"
-              >
+              <button onClick={() => handleDelete(room._id)} className="cursor-pointer hover:underline">
                 삭제
               </button>
             )}

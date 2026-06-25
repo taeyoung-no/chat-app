@@ -1,10 +1,4 @@
-import {
-  createContext,
-  type ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-} from 'react'
+import { createContext, type ReactNode, useContext, useEffect, useMemo } from 'react'
 import { io, type Socket } from 'socket.io-client'
 
 interface SocketContextType {
@@ -26,11 +20,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [socket])
 
-  return (
-    <SocketContext.Provider value={{ socket }}>
-      {children}
-    </SocketContext.Provider>
-  )
+  return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>
 }
 
 export const useSocket = () => {

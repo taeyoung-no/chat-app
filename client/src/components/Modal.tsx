@@ -14,8 +14,6 @@ function Modal({ isOpen, title, children }: ModalProps) {
       <div className="bg-white w-full max-w-md p-6">
         <h2 className="text-xl mb-4">{title}</h2>
         <div className="mb-4">{children}</div>
-
-        
       </div>
     </div>
   )

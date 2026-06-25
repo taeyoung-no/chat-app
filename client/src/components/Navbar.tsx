@@ -39,9 +39,7 @@ function Navbar() {
                 목록
               </Link>
               <button
-                onClick={() =>
-                  user ? setShowCreateRoomModal(true) : setShowLoginModal(true)
-                }
+                onClick={() => (user ? setShowCreateRoomModal(true) : setShowLoginModal(true))}
                 className="cursor-pointer hover:underline"
               >
                 생성
@@ -51,26 +49,17 @@ function Navbar() {
 
           {!user ? (
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowRegisterModal(true)}
-                className="cursor-pointer hover:underline"
-              >
+              <button onClick={() => setShowRegisterModal(true)} className="cursor-pointer hover:underline">
                 회원가입
               </button>
-              <button
-                onClick={() => setShowLoginModal(true)}
-                className="cursor-pointer hover:underline"
-              >
+              <button onClick={() => setShowLoginModal(true)} className="cursor-pointer hover:underline">
                 로그인
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-3">
               <span>{user.username}님</span>
-              <button
-                onClick={() => mutation.mutate()}
-                className="cursor-pointer hover:underline"
-              >
+              <button onClick={() => mutation.mutate()} className="cursor-pointer hover:underline">
                 로그아웃
               </button>
             </div>
@@ -78,20 +67,11 @@ function Navbar() {
         </nav>
       </header>
 
-      <RegisterModal
-        isOpen={showRegisterModal}
-        onClose={() => setShowRegisterModal(false)}
-      />
+      <RegisterModal isOpen={showRegisterModal} onClose={() => setShowRegisterModal(false)} />
 
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
 
-      <CreateRoomModal
-        isOpen={showCreateRoomModal}
-        onClose={() => setShowCreateRoomModal(false)}
-      />
+      <CreateRoomModal isOpen={showCreateRoomModal} onClose={() => setShowCreateRoomModal(false)} />
     </>
   )
 }
