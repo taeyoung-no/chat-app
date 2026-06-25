@@ -1,4 +1,4 @@
-import type { User } from '../../../shared/schemas/auth'
+import type { User } from 'shared/schemas/auth'
 import api from './client'
 
 export const registerUser = async (

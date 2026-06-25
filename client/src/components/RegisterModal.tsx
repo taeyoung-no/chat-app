@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import {
   type RegisterFormData,
   registerSchema,
-} from '../../../shared/schemas/auth'
+} from 'shared/schemas/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 interface RegisterModalProps {

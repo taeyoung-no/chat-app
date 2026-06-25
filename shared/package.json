@@ -1,0 +1,10 @@
+{
+  "name": "shared",
+  "type": "module",
+  "exports": {
+    "./schemas/*": "./schemas/*.ts"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
+}

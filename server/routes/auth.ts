@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt'
 import Users from '../models/User'
 import isAuthenticated from '../middleware/auth'
 import AppError from '../utils/AppError'
-import { loginSchema, registerSchema } from '../../shared/schemas/auth'
-import type { User } from '../../shared/schemas/auth'
+import { loginSchema, registerSchema } from 'shared/schemas/auth'
+import type { User } from 'shared/schemas/auth'
 import validate from '../utils/validate'
 
 const router = express.Router()

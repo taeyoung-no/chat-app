@@ -1,0 +1,9 @@
+node_modules
+.git
+.env
+client
+server/test
+server/vitest.config.ts
+shared/node_modules
+client/node_modules
+server/node_modules

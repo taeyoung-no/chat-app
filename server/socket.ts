@@ -2,8 +2,8 @@ import express from 'express'
 import sessionMiddleware from './middleware/session.js'
 import { Server, Socket } from 'socket.io'
 import validate from './utils/validate.js'
-import { sendMessageSchema } from '../shared/schemas/message.js'
-import type { Message } from '../shared/schemas/message.js'
+import { sendMessageSchema } from 'shared/schemas/message.js'
+import type { Message } from 'shared/schemas/message.js'
 import Messages from './models/Message.js'
 
 export function setupSockets(io: Server) {

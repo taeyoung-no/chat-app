@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { registerSchema, loginSchema } from '../../shared/schemas/auth'
-import { createRoomSchema } from '../../shared/schemas/room'
-import { sendMessageSchema } from '../../shared/schemas/message'
+import { registerSchema, loginSchema } from 'shared/schemas/auth'
+import { createRoomSchema } from 'shared/schemas/room'
+import { sendMessageSchema } from 'shared/schemas/message'
 
 describe('registerSchema', () => {
   it('유효한 입력', () => {

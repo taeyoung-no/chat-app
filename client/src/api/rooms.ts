@@ -1,4 +1,4 @@
-import type { Room } from '../../../shared/schemas/room'
+import type { Room } from 'shared/schemas/room'
 import api from './client'
 
 export const fetchRooms = async (): Promise<Room[]> => {

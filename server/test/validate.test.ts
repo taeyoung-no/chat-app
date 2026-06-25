@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import validate from '../utils/validate'
-import { registerSchema, loginSchema } from '../../shared/schemas/auth'
-import { createRoomSchema } from '../../shared/schemas/room'
-import { sendMessageSchema } from '../../shared/schemas/message'
+import { registerSchema, loginSchema } from 'shared/schemas/auth'
+import { createRoomSchema } from 'shared/schemas/room'
+import { sendMessageSchema } from 'shared/schemas/message'
 
 describe('validate', () => {
   describe('register', () => {

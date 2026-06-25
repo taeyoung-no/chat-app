@@ -15,7 +15,7 @@ const SocketContext = createContext<SocketContextType>({ socket: null })
 
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
   const socket = useMemo(() => {
-    return io(import.meta.env.VITE_API_URL, {
+    return io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
       withCredentials: true,
     })
   }, [])

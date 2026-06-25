@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../store/slices/authSlice'
 import { useForm } from 'react-hook-form'
-import { type LoginFormData, loginSchema } from '../../../shared/schemas/auth'
+import { type LoginFormData, loginSchema } from 'shared/schemas/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 interface LoginModalProps {

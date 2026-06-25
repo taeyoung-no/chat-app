@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import {
   type CreateRoomFormData,
   createRoomSchema,
-} from '../../../shared/schemas/room'
+} from 'shared/schemas/room'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
 
