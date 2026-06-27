@@ -14,7 +14,15 @@ try {
   process.exit(1)
 }
 
-const pubClient = createClient({ url: process.env.REDIS_URL! })
+const pubClient = createClient({
+  url: process.env.REDIS_URL!,
+  socket: {
+    reconnectStrategy: (retries) => {
+      console.log(`[Redis] 재연결 시도 ${retries}`)
+      return Math.min(retries * 100, 3000)
+    },
+  },
+})
 const subClient = pubClient.duplicate()
 
 pubClient.on('error', (err) => console.log(`[Redis pub] ${err}`))
@@ -46,3 +54,16 @@ const PORT = process.env.PORT
 httpServer.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`)
 })
+
+const shutdown = async () => {
+  try {
+    await pubClient.quit()
+    await subClient.quit()
+  } catch (err) {
+    console.log(`[Redis] ${err}`)
+  }
+  process.exit(0)
+}
+
+process.on('SIGTERM', shutdown)
+process.on('SIGINT', shutdown)
