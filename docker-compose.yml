@@ -19,6 +19,8 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
     environment:
       - CHOKIDAR_USEPOLLING=true
@@ -45,5 +47,21 @@ services:
       start_period: 10s
     restart: unless-stopped
 
+  redis:
+    image: redis:alpine
+    container_name: chat-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    restart: unless-stopped
+
 volumes:
   mongo-data:
+  redis-data:
