@@ -15,6 +15,7 @@ beforeAll(async () => {
   process.env.MONGODB_URI = uri
   process.env.SESSION_SECRET = 'test-session-secret-1234567890-very-long-string'
   process.env.CLIENT_URL = 'http://localhost:5173'
+  process.env.REDIS_URL = 'redis://127.0.0.1:6379'
 
   app = (await import('../app.js')).default
 
