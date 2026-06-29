@@ -16,15 +16,16 @@ export function setupSockets(io: Server) {
       if (req.session?.userId) {
         socket.data.userId = req.session.userId
         socket.data.username = req.session.username
-        next()
-      } else {
-        next(new Error('로그인부터 하세요'))
       }
+      next()
     })
   })
 
   io.on('connection', (socket: Socket) => {
     socket.on('join', async (roomId: string) => {
+      if (!socket.data.userId) {
+        return socket.emit('error', { message: '로그인부터 하세요' })
+      }
       socket.join(roomId)
       try {
         const messages = await Messages.find({ roomId })
@@ -42,6 +43,9 @@ export function setupSockets(io: Server) {
     })
 
     socket.on('message', async (data) => {
+      if (!socket.data.userId) {
+        return socket.emit('error', { message: '로그인부터 하세요' })
+      }
       try {
         const { roomId, content } = validate(sendMessageSchema, data)
         const message = await Messages.create({
