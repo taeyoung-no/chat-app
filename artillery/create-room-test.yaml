@@ -1,0 +1,41 @@
+config:
+  target: 'http://localhost:8080'
+  phases:
+    - duration: 60
+      arrivalRate: 30
+  defaults:
+    headers:
+      'Content-Type': 'application/json'
+
+scenarios:
+  - name: 'create room test'
+    flow:
+      - post:
+          url: '/auth/register'
+          json:
+            username: 'art_{{ $randomString(8) }}'
+            password: 'password'
+          capture:
+            - json: '$.user.username'
+              as: 'username'
+
+      - post:
+          url: '/auth/login'
+          json:
+            username: '{{ username }}'
+            password: 'password'
+
+      - post:
+          url: '/room'
+          json:
+            name: 'art_{{ $randomString(6) }}'
+          capture:
+            - json: '$.room._id'
+              as: 'roomId'
+          expect:
+            - statusCode: 201
+
+      - get:
+          url: '/room'
+          expect:
+            - statusCode: 200
