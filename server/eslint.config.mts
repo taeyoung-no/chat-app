@@ -11,6 +11,15 @@ export default defineConfig([
     extends: ['js/recommended'],
     languageOptions: { globals: globals.node },
   },
+  {
+    files: ['**/*.{ts,mts,cts}'],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
   tseslint.configs.recommended,
   prettierConfig,
   {
