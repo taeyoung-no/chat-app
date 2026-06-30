@@ -6,6 +6,7 @@ import { setUser } from '../store/slices/authSlice'
 import { useForm } from 'react-hook-form'
 import { type RegisterFormData, registerSchema } from 'shared/schemas/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useSocket } from '../contexts/SocketContext'
 
 interface RegisterModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ interface Credentials {
 
 function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   const dispatch = useDispatch()
+  const socket = useSocket()
 
   const {
     register,
@@ -37,6 +39,10 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
     mutationFn: (credentials: Credentials) => registerUser(credentials.username, credentials.password),
     onSuccess: (user) => {
       dispatch(setUser(user))
+      if (socket) {
+        socket.disconnect()
+        socket.connect()
+      }
       reset()
       onClose()
     },

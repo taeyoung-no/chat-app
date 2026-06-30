@@ -5,7 +5,6 @@ export const registerUser = async (username: string, password: string): Promise<
   try {
     const res = await api.post('/auth/register', { username, password })
     if (!res.data.success) throw new Error(res.data.message)
-    login(username, password)
     return res.data.user
   } catch (err: any) {
     throw new Error(err.response?.data?.message || err.message || '회원가입 실패')

@@ -21,6 +21,9 @@ router.post('/register', async (req, res, next) => {
       password: hashedPassword,
     })
 
+    req.session.userId = user._id.toString()
+    req.session.username = user.username
+
     const userResponse: User = {
       _id: user._id.toString(),
       username: user.username,
