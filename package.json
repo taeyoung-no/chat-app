@@ -8,9 +8,5 @@
   ],
   "devDependencies": {
     "artillery": "^2.0.0"
-  },
-  "scripts": {
-    "artillery:login": "npx artillery run artillery/login-cookie-test.yaml",
-    "artillery:room": "npx artillery run artillery/room-auth-test.yaml"
   }
 }
