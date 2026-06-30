@@ -1,7 +1,6 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
 import Users from '../models/User'
-import isAuthenticated from '../middleware/auth'
 import AppError from '../utils/AppError'
 import { loginSchema, registerSchema } from 'shared/schemas/auth'
 import type { User } from 'shared/schemas/auth'
@@ -76,7 +75,15 @@ router.post('/logout', (req, res, next) => {
   })
 })
 
-router.get('/me', isAuthenticated, (req, res) => {
+router.get('/me', (req, res) => {
+  if (!req.session?.userId) {
+    return res.json({
+      success: true,
+      message: '로그인되지 않음',
+      user: null,
+    })
+  }
+
   const userResponse: User = {
     _id: req.session.userId!,
     username: req.session.username!,

@@ -22,7 +22,7 @@ export const login = async (username: string, password: string): Promise<User> =
   }
 }
 
-export const getCurrentUser = async (): Promise<User> => {
+export const getCurrentUser = async (): Promise<User | null> => {
   try {
     const res = await api.get('/auth/me')
     if (!res.data.success) throw new Error(res.data.message)
