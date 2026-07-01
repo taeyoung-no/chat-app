@@ -1,13 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import type { RootState } from '../store'
 import { sendMessageSchema } from 'shared/schemas/message'
-import { useSocket } from '../contexts/SocketContext'
+import { io } from 'socket.io-client'
 import type { Message } from 'shared/schemas/message'
 
 function Room() {
-  const socket = useSocket()
   const navigate = useNavigate()
   const { id } = useParams()
   const [input, setInput] = useState('')
@@ -15,6 +14,11 @@ function Room() {
 
   const username = useSelector((state: RootState) => state.auth.user?.username)
   const messageEndRef = useRef<HTMLDivElement>(null)
+
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+  const socket = useMemo(() => {
+    return io(`${baseUrl}/private`, { withCredentials: true })
+  }, [baseUrl])
 
   useEffect(() => {
     if (!socket) return
@@ -39,6 +43,7 @@ function Room() {
       socket.off('messages')
       socket.off('message')
       socket.off('error')
+      socket.disconnect()
     }
   }, [socket, id])
 

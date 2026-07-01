@@ -1,12 +1,35 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useEffect, useMemo } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { deleteRoom, fetchRooms } from '../api/rooms'
 import { Link } from 'react-router-dom'
+import { io } from 'socket.io-client'
 
 import { useSelector } from 'react-redux'
 import type { RootState } from '../store'
 
 function List() {
   const user = useSelector((state: RootState) => state.auth.user)
+  const queryClient = useQueryClient()
+
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+  const socket = useMemo(() => {
+    return io(baseUrl)
+  }, [baseUrl])
+
+  useEffect(() => {
+    if (!socket) return
+    socket.on('create', () => {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] })
+    })
+    socket.on('delete', () => {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] })
+    })
+    return () => {
+      socket.off('create')
+      socket.off('delete')
+      socket.disconnect()
+    }
+  }, [socket, queryClient])
 
   const {
     data: rooms = [],

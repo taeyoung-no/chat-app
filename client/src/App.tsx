@@ -7,13 +7,9 @@ import { setUser } from './store/slices/authSlice'
 import List from './components/List'
 import { Route, Routes } from 'react-router-dom'
 import Room from './components/Room'
-import { useSocket } from './contexts/SocketContext'
-import { useQueryClient } from '@tanstack/react-query'
 
 function App() {
   const dispatch = useDispatch()
-  const socket = useSocket()
-  const queryClient = useQueryClient()
 
   useEffect(() => {
     const checkAuthState = async () => {
@@ -26,20 +22,6 @@ function App() {
     }
     checkAuthState()
   }, [])
-
-  useEffect(() => {
-    if (!socket) return
-    socket.on('create', () => {
-      queryClient.invalidateQueries({ queryKey: ['rooms'] })
-    })
-    socket.on('delete', () => {
-      queryClient.invalidateQueries({ queryKey: ['rooms'] })
-    })
-    return () => {
-      socket.off('create')
-      socket.off('delete')
-    }
-  }, [socket, queryClient])
 
   return (
     <div className="flex flex-col min-h-screen">

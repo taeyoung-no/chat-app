@@ -6,7 +6,7 @@ import App from './App.tsx'
 import { store } from './store/index.ts'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
-import { SocketProvider } from './contexts/SocketContext.tsx'
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,12 +21,10 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
-      <SocketProvider>
-        <BrowserRouter>
-          <App />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </BrowserRouter>
-      </SocketProvider>
+      <BrowserRouter>
+        <App />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </BrowserRouter>
     </Provider>
   </QueryClientProvider>
 )
