@@ -1,12 +1,9 @@
 import express from 'express'
-import dotenv from 'dotenv'
 import cors from 'cors'
 import sessionMiddleware from './middleware/session'
 import authRouter from './routes/auth.js'
 import roomRouter from './routes/room.js'
 import errorHandler from './middleware/errorHandler.js'
-
-dotenv.config()
 
 const app = express()
 
