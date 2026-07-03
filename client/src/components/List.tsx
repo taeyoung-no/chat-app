@@ -1,8 +1,7 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { deleteRoom, fetchRooms } from '../api/rooms'
 import { Link } from 'react-router-dom'
-import { io } from 'socket.io-client'
 
 import { useSelector } from 'react-redux'
 import type { RootState } from '../store'
@@ -12,24 +11,26 @@ function List() {
   const queryClient = useQueryClient()
 
   const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
-  const socket = useMemo(() => {
-    return io(baseUrl)
-  }, [baseUrl])
 
   useEffect(() => {
-    if (!socket) return
-    socket.on('create', () => {
+    const es = new EventSource(`${baseUrl}/stream/rooms`)
+
+    es.addEventListener('create', () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
     })
-    socket.on('delete', () => {
+    es.addEventListener('delete', () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
     })
-    return () => {
-      socket.off('create')
-      socket.off('delete')
-      socket.disconnect()
+
+    es.onerror = (err) => {
+      // EventSource will attempt to reconnect automatically
+      console.warn('[SSE] room events connection issue', err)
     }
-  }, [socket, queryClient])
+
+    return () => {
+      es.close()
+    }
+  }, [baseUrl, queryClient])
 
   const {
     data: rooms = [],

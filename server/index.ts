@@ -5,6 +5,7 @@ import { createClient } from 'redis'
 import { createAdapter } from '@socket.io/redis-adapter'
 import app from './app.js'
 import { setupSockets } from './socket.js'
+import { Response } from 'express'
 
 try {
   await mongoose.connect(process.env.MONGODB_URI!)
@@ -14,7 +15,7 @@ try {
   process.exit(1)
 }
 
-const pubClient = createClient({
+const publisher = createClient({
   url: process.env.REDIS_URL!,
   socket: {
     reconnectStrategy: (retries) => {
@@ -23,18 +24,33 @@ const pubClient = createClient({
     },
   },
 })
-const subClient = pubClient.duplicate()
+const socketSubscriber = publisher.duplicate()
+const sseSubscriber = publisher.duplicate()
 
-pubClient.on('error', (err) => console.log(`[Redis pub] ${err}`))
-subClient.on('error', (err) => console.log(`[Redis sub] ${err}`))
+publisher.on('error', (err) => console.log(`[Redis Publisher] ${err}`))
+socketSubscriber.on('error', (err) => console.log(`[Redis Socket Subscriber] ${err}`))
+sseSubscriber.on('error', (err) => console.log(`[Redis SSE Subscriber] ${err}`))
+
+const sseClients = new Set<Response>()
+app.set('sseClients', sseClients)
 
 try {
-  await Promise.all([pubClient.connect(), subClient.connect()])
+  await Promise.all([publisher.connect(), socketSubscriber.connect(), sseSubscriber.connect()])
   console.log('[Redis] 연결 성공')
+
+  await sseSubscriber.subscribe('room-events', (e: string) => {
+    const payload = `event: ${e}\ndata: \n\n`
+    for (const res of [...sseClients]) {
+      res.write(payload)
+    }
+  })
 } catch (err) {
   console.log(`[Redis] ${err}`)
   process.exit(1)
 }
+
+app.set('publisher', publisher)
+app.set('sseSubscriber', sseSubscriber)
 
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
@@ -44,7 +60,7 @@ const io = new Server(httpServer, {
   },
 })
 
-io.adapter(createAdapter(pubClient, subClient))
+io.adapter(createAdapter(publisher, socketSubscriber))
 
 app.set('io', io)
 setupSockets(io)
@@ -57,8 +73,9 @@ httpServer.listen(PORT, () => {
 
 const shutdown = async () => {
   try {
-    await pubClient.quit()
-    await subClient.quit()
+    await publisher.quit()
+    await socketSubscriber.quit()
+    await sseSubscriber.quit()
   } catch (err) {
     console.log(`[Redis] ${err}`)
   }

@@ -17,7 +17,7 @@ function Room() {
 
   const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
   const socket = useMemo(() => {
-    return io(`${baseUrl}/private`, { withCredentials: true, forceNew: true })
+    return io(baseUrl, { withCredentials: true, forceNew: true })
   }, [baseUrl])
 
   useEffect(() => {

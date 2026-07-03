@@ -17,6 +17,14 @@ app.use(
 )
 app.use(express.json())
 app.use(sessionMiddleware)
+app.get('/stream/rooms', (req, res) => {
+  req.app.get('sseClients').add(res)
+  res.writeHead(200, {
+    Connection: 'keep-alive',
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+  })
+})
 app.use('/auth', authRouter)
 app.use('/room', roomRouter)
 app.use(errorHandler)

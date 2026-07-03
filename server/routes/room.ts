@@ -25,7 +25,8 @@ router.post('/', isAuthenticated, async (req, res, next) => {
       message: '채팅방 생성 성공',
       room: roomResponse,
     })
-    req.app.get('io')?.emit('create')
+
+    req.app.get('publisher').publish('room-events', 'create')
   } catch (err) {
     next(err)
   }
@@ -61,7 +62,8 @@ router.delete('/:id', isAuthenticated, async (req, res, next) => {
     await Rooms.deleteOne({ _id: id })
     await Message.deleteMany({ roomId: id })
     res.status(200).json({ success: true, message: '방 삭제 성공' })
-    req.app.get('io')?.emit('delete')
+
+    req.app.get('publisher').publish('room-events', 'delete')
   } catch (err) {
     next(err)
   }

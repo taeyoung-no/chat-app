@@ -7,9 +7,7 @@ import type { Message } from 'shared/schemas/message.js'
 import Messages from './models/Message.js'
 
 export function setupSockets(io: Server) {
-  const privateNs = io.of('/private')
-
-  privateNs.use((socket, next) => {
+  io.use((socket, next) => {
     const req = socket.request as express.Request & { session: any }
 
     sessionMiddleware(req, {} as any, (err) => {
@@ -23,7 +21,7 @@ export function setupSockets(io: Server) {
     })
   })
 
-  privateNs.on('connection', (socket: Socket) => {
+  io.on('connection', (socket: Socket) => {
     socket.on('join', async (roomId: string) => {
       if (!socket.data.userId) {
         return socket.emit('error', { message: '로그인부터 하세요' })
@@ -62,7 +60,7 @@ export function setupSockets(io: Server) {
           content: message.content,
           createdAt: message.createdAt,
         }
-        privateNs.to(roomId).emit('message', messageResponse)
+        io.to(roomId).emit('message', messageResponse)
       } catch (err: any) {
         socket.emit('error', { message: err.message || '메시지 전송 실패' })
       }
