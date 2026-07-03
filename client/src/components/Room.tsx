@@ -36,6 +36,7 @@ function Room() {
       setMessages((prev) => [...prev, data])
     })
     socket.on('error', (err: any) => {
+      navigate('/')
       alert(err.message || '서버 에러인 듯')
     })
 
