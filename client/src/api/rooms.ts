@@ -1,9 +1,9 @@
 import type { Room } from 'shared/schemas/room'
 import api from './client'
 
-export const fetchRooms = async (): Promise<Room[]> => {
+export const fetchRooms = async (params: { page: number }): Promise<Room[]> => {
   try {
-    const res = await api.get('/room')
+    const res = await api.get('/room', { params })
     if (!res.data.success) throw new Error(res.data.message)
     return res.data.rooms
   } catch (err: any) {

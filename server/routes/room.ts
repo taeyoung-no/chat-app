@@ -34,7 +34,12 @@ router.post('/', isAuthenticated, async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    const rooms = await Rooms.find().sort({ createdAt: -1 })
+    const page = Math.max(1, parseInt(String(req.query.page)) || 1)
+    const limit = 20
+    const skip = (page - 1) * limit
+
+    const rooms = await Rooms.find().sort({ createdAt: -1 }).skip(skip).limit(limit)
+
     const roomsResponse: Room[] = rooms.map((r) => ({
       _id: r._id.toString(),
       name: r.name,

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { deleteRoom, fetchRooms } from '../api/rooms'
 import { Link } from 'react-router-dom'
 
@@ -23,8 +23,7 @@ function List() {
     })
 
     es.onerror = (err) => {
-      // EventSource will attempt to reconnect automatically
-      console.warn('[SSE] room events connection issue', err)
+      console.warn(`[SSE] ${err}`)
     }
 
     return () => {
@@ -32,15 +31,13 @@ function List() {
     }
   }, [baseUrl, queryClient])
 
-  const {
-    data: rooms = [],
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } = useInfiniteQuery({
     queryKey: ['rooms'],
-    queryFn: fetchRooms,
+    queryFn: ({ pageParam }) => fetchRooms({ page: pageParam }),
+    getNextPageParam: (lastPage, allPages) => (lastPage.length === 20 ? allPages.length + 1 : undefined),
+    initialPageParam: 1,
   })
+  const rooms = data?.pages.flat() ?? []
 
   const deleteMutation = useMutation({
     mutationFn: (roomId: string) => deleteRoom(roomId),
@@ -72,6 +69,18 @@ function List() {
           </div>
         ))}
       </div>
+
+      {hasNextPage && (
+        <div className="max-w-2xl mx-auto text-center mt-2 mb-5">
+          <button
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+            className={`${isFetchingNextPage ? '' : 'cursor-pointer hover:underline'}`}
+          >
+            {isFetchingNextPage ? '불러오는 중...' : '더 보기'}
+          </button>
+        </div>
+      )}
     </main>
   )
 }
