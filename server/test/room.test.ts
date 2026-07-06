@@ -1,6 +1,10 @@
 import app from './setup'
 import request from 'supertest'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
+
+beforeAll(() => {
+  app.set('publisher', { publish: () => {} })
+})
 
 describe('Room API', () => {
   describe('GET /room', () => {
