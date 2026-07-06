@@ -61,14 +61,14 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
         <div className="space-y-1 mb-6">
           <div>
             <h4>이름</h4>
-            <input type="text" {...register('username')} className="w-full px-4 py-3 border border-gray-300" />
+            <input type="text" {...register('username')} maxLength={20} className="w-full px-4 py-3 border border-gray-300" />
             <div className="min-h-6">
               {errors.username && <p className="text-red-500">{errors.username.message}</p>}
             </div>
           </div>
           <div>
             <h4>비밀번호</h4>
-            <input type="password" {...register('password')} className="w-full px-4 py-3 border border-gray-300" />
+            <input type="password" {...register('password')} maxLength={32} className="w-full px-4 py-3 border border-gray-300" />
             <div className="min-h-6">
               {errors.password && <p className="text-red-500">{errors.password.message}</p>}
             </div>

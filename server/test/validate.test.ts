@@ -43,6 +43,15 @@ describe('validate', () => {
         })
       ).toThrow()
     })
+
+    it('password 8자 미만이면 실패', () => {
+      expect(() =>
+        validate(registerSchema, {
+          username: 'username',
+          password: 'pwd',
+        })
+      ).toThrow()
+    })
   })
 
   describe('login', () => {
@@ -73,6 +82,15 @@ describe('validate', () => {
         })
       ).toThrow()
     })
+
+    it('password 8자 미만이면 실패', () => {
+      expect(() =>
+        validate(loginSchema, {
+          username: 'username',
+          password: 'pwd',
+        })
+      ).toThrow()
+    })
   })
 
   describe('createRoom', () => {
@@ -96,6 +114,14 @@ describe('validate', () => {
       expect(() =>
         validate(createRoomSchema, {
           name: '',
+        })
+      ).toThrow()
+    })
+
+    it('방 이름 32자 초과이면 실패', () => {
+      expect(() =>
+        validate(createRoomSchema, {
+          name: 'a'.repeat(33),
         })
       ).toThrow()
     })
@@ -135,6 +161,15 @@ describe('validate', () => {
         validate(sendMessageSchema, {
           roomId: '507f1f77bcf86cd799439011',
           content: '',
+        })
+      ).toThrow()
+    })
+
+    it('content 32자 초과이면 실패', () => {
+      expect(() =>
+        validate(sendMessageSchema, {
+          roomId: '507f1f77bcf86cd799439011',
+          content: 'a'.repeat(33),
         })
       ).toThrow()
     })

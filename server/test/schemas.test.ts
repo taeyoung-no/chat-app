@@ -47,6 +47,24 @@ describe('registerSchema', () => {
 
     expect(result.success).toBe(false)
   })
+
+  it('password 8자 미만이면 실패', () => {
+    const result = registerSchema.safeParse({
+      username: 'username',
+      password: 'pwd',
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('username 20자 초과하면 실패', () => {
+    const result = registerSchema.safeParse({
+      username: 'a'.repeat(21),
+      password: 'password',
+    })
+
+    expect(result.success).toBe(false)
+  })
 })
 
 describe('loginSchema', () => {
@@ -72,6 +90,24 @@ describe('loginSchema', () => {
     const result = loginSchema.safeParse({
       username: 'username',
       password: ' ',
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('password 8자 미만이면 실패한다', () => {
+    const result = loginSchema.safeParse({
+      username: 'username',
+      password: 'pwd',
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('username 20자 초과이면 실패한다', () => {
+    const result = loginSchema.safeParse({
+      username: 'a'.repeat(21),
+      password: 'password',
     })
 
     expect(result.success).toBe(false)
@@ -104,6 +140,14 @@ describe('createRoomSchema', () => {
   it('방 이름 공백 시 실패', () => {
     const result = createRoomSchema.safeParse({
       name: '',
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('방 이름 32자 초과이면 실패', () => {
+    const result = createRoomSchema.safeParse({
+      name: 'a'.repeat(33),
     })
 
     expect(result.success).toBe(false)
@@ -148,6 +192,15 @@ describe('sendMessageSchema', () => {
     const result = sendMessageSchema.safeParse({
       roomId: '507f1f77bcf86cd799439011',
       content: '',
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('content 32자 초과이면 실패한다', () => {
+    const result = sendMessageSchema.safeParse({
+      roomId: '507f1f77bcf86cd799439011',
+      content: 'a'.repeat(33),
     })
 
     expect(result.success).toBe(false)

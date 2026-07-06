@@ -8,7 +8,7 @@ export const roomSchema = z.object({
 })
 
 export const createRoomSchema = z.object({
-  name: z.string().trim().min(1, '방 이름 입력하세요'),
+  name: z.string().trim().min(1, '방 이름 입력하세요').max(32, '너무 길어요'),
 })
 
 export type Room = z.infer<typeof roomSchema>

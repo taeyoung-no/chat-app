@@ -10,16 +10,10 @@ let app: any
 
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create()
-  const uri = mongod.getUri()
-
-  process.env.MONGODB_URI = uri
-  process.env.SESSION_SECRET = 'test-session-secret-1234567890-very-long-string'
-  process.env.CLIENT_URL = 'https://localhost:5173'
-  process.env.REDIS_URL = 'redis://127.0.0.1:6379'
-
+  const uri = (process.env.MONGODB_URI = mongod.getUri())
+    await mongoose.connect(uri)
+    
   app = (await import('../app.js')).default
-
-  await mongoose.connect(uri)
 })
 
 afterEach(async () => {

@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const messageSchema = new mongoose.Schema({
   roomId: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
   username: { type: String, required: true },
-  content: { type: String, required: true },
+  content: { type: String, required: true, minlength: 1, maxlength: 32 },
   createdAt: { type: Date, default: Date.now },
 })
 

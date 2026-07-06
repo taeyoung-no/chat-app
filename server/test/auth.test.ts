@@ -28,6 +28,13 @@ describe('Auth API', () => {
       expect(res.status).toBe(400)
       expect(res.body.success).toBe(false)
     })
+
+    it('password 8자 미만이면 400', async () => {
+      const res = await request(app).post('/auth/register').send({ username: 'username', password: 'pwd' })
+
+      expect(res.status).toBe(400)
+      expect(res.body.success).toBe(false)
+    })
   })
 
   describe('POST /auth/login', () => {
@@ -67,7 +74,8 @@ describe('Auth API', () => {
       expect(logoutRes.body.success).toBe(true)
 
       const meAfter = await agent.get('/auth/me')
-      expect(meAfter.status).toBe(401)
+      expect(meAfter.status).toBe(200)
+      expect(meAfter.body.user).toBe(null)
     })
   })
 })

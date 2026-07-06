@@ -50,7 +50,7 @@ function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
   return (
     <Modal isOpen={isOpen} title="방 생성">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <input type="text" {...register('name')} className="w-full px-4 py-3 border border-gray-300" />
+        <input type="text" {...register('name')} maxLength={32} className="w-full px-4 py-3 border border-gray-300" />
         <div className="min-h-6">{errors.name && <p className="text-red-500">{errors.name.message}</p>}</div>
 
         <div className="flex justify-end gap-2">

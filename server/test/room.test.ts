@@ -60,6 +60,16 @@ describe('Room API', () => {
       expect(res.status).toBe(400)
       expect(res.body.success).toBe(false)
     })
+
+    it('방 이름 32자 초과하면 400', async () => {
+      const agent = request.agent(app)
+      await agent.post('/auth/register').send({ username: 'username', password: 'password' })
+      await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+      const res = await agent.post('/room').send({ name: 'a'.repeat(33) })
+
+      expect(res.status).toBe(400)
+      expect(res.body.success).toBe(false)
+    })
   })
 
   describe('DELETE /room/:id', () => {

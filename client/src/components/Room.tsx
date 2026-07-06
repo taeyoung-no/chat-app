@@ -87,6 +87,7 @@ function Room() {
           onKeyDown={(e) => {
             if (e.key === 'Enter') sendMessage()
           }}
+          maxLength={32}
           className="w-full border border-gray-300 px-4 py-3"
         />
         <button onClick={sendMessage} className="flex-shrink-0 cursor-pointer px-3 py-2 hover:underline">
