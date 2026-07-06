@@ -8,10 +8,10 @@ dotenv.config({ quiet: true })
 
 const BASE_URL = process.env.VITE_API_URL || 'https://localhost:8443'
 const DURATION = 60
-const ARRIVAL_RATE = 30
+const ARRIVAL_RATE = 1
 const ARRIVAL_COUNT = DURATION * ARRIVAL_RATE
 
-const ROOM_ID = '6a4a191e814339ee18f37a61'
+const ROOM_ID = process.env.ROOM_ID
 
 let requests = 0
 const codes = {}
