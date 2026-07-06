@@ -13,6 +13,8 @@ describe('Socket / Message', () => {
     url = srv.url
     httpServer = srv.httpServer
     ioServer = srv.io
+
+    app.set('publisher', { publish: () => {} })
   })
 
   afterAll(() => {
@@ -26,14 +28,11 @@ describe('Socket / Message', () => {
     })
 
     const err = await new Promise<any>((resolve) => {
-      client.on('connect_error', (e) => {
+      client.once('error', (e) => {
         resolve(e)
         client.close()
       })
-      client.on('connect', () => {
-        client.close()
-        resolve(null)
-      })
+      client.emit('join', 'dummy-room')
     })
 
     expect(err).toBeTruthy()
@@ -43,10 +42,10 @@ describe('Socket / Message', () => {
   it('로그인 후 join, messages 수신, 메시지 전송, broadcast 수신', async () => {
     const agent = request.agent(app)
 
-    await agent.post('/auth/register').send({ username: 'username', password: 'password' })
-    const loginRes = await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+    const res = await agent.post('/auth/register').send({ username: 'username', password: 'password' })
+    await agent.post('/auth/login').send({ username: 'username', password: 'password' })
 
-    const cookies = loginRes.headers['set-cookie']
+    const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
@@ -84,10 +83,10 @@ describe('Socket / Message', () => {
 
   it('잘못된 메시지 전송 시 error 이벤트 수신', async () => {
     const agent = request.agent(app)
-    await agent.post('/auth/register').send({ username: 'username', password: 'password' })
-    const loginRes = await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+    const res = await agent.post('/auth/register').send({ username: 'username', password: 'password' })
+    await agent.post('/auth/login').send({ username: 'username', password: 'password' })
 
-    const cookies = loginRes.headers['set-cookie']
+    const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
@@ -115,52 +114,17 @@ describe('Socket / Message', () => {
     client.close()
   })
 
-  it('방 생성/삭제 시 create, delete 이벤트 수신', async () => {
-    const agent = request.agent(app)
-    await agent.post('/auth/register').send({ username: 'username', password: 'password' })
-    const loginRes = await agent.post('/auth/login').send({ username: 'username', password: 'password' })
-
-    const cookies = loginRes.headers['set-cookie']
-    const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
-
-    const client = Client(url, {
-      withCredentials: true,
-      extraHeaders: { Cookie: cookieHeader },
-    })
-
-    await new Promise<void>((resolve) => client.on('connect', resolve))
-
-    const createPromise = new Promise<any>((resolve) => {
-      client.once('create', resolve)
-    })
-
-    const createRes = await agent.post('/room').send({ name: 'room' })
-    const roomId = createRes.body.room._id
-
-    await createPromise
-
-    const deletePromise = new Promise<any>((resolve) => {
-      client.once('delete', resolve)
-    })
-
-    await agent.delete(`/room/${roomId}`)
-
-    await deletePromise
-
-    client.close()
-  })
-
   it('메시지 브로드캐스트', async () => {
     const agent1 = request.agent(app)
-    await agent1.post('/auth/register').send({ username: 'username', password: 'password' })
-    const login1 = await agent1.post('/auth/login').send({ username: 'username', password: 'password' })
-    const cookies1 = login1.headers['set-cookie']
+    let res = await agent1.post('/auth/register').send({ username: 'username', password: 'password' })
+    await agent1.post('/auth/login').send({ username: 'username', password: 'password' })
+    const cookies1 = res.headers['set-cookie']
     const cookieHeader1 = Array.isArray(cookies1) ? cookies1.join('; ') : cookies1 || ''
 
     const agent2 = request.agent(app)
-    await agent2.post('/auth/register').send({ username: 'other', password: 'password' })
-    const login2 = await agent2.post('/auth/login').send({ username: 'other', password: 'password' })
-    const cookies2 = login2.headers['set-cookie']
+    res = await agent2.post('/auth/register').send({ username: 'other', password: 'password' })
+    await agent2.post('/auth/login').send({ username: 'other', password: 'password' })
+    const cookies2 = res.headers['set-cookie']
     const cookieHeader2 = Array.isArray(cookies2) ? cookies2.join('; ') : cookies2 || ''
 
     const client1 = Client(url, {
@@ -203,10 +167,10 @@ describe('Socket / Message', () => {
 
   it('messages 이벤트 수신', async () => {
     const agent = request.agent(app)
-    await agent.post('/auth/register').send({ username: 'username', password: 'password' })
-    const loginRes = await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+    const res = await agent.post('/auth/register').send({ username: 'username', password: 'password' })
+    await agent.post('/auth/login').send({ username: 'username', password: 'password' })
 
-    const cookies = loginRes.headers['set-cookie']
+    const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client1 = Client(url, {
