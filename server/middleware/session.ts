@@ -8,8 +8,8 @@ const redisClient = createClient({
     reconnectStrategy: (retries) => {
       console.log(`[Redis] 재연결 시도 ${retries}`)
       return Math.min(retries * 100, 3000)
-    }
-  }
+    },
+  },
 })
 
 redisClient.on('error', (err) => console.log(`[Redis] ${err}`))
@@ -37,6 +37,8 @@ const sessionMiddleware = session({
   }),
   cookie: {
     httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 1000,
   },
 })

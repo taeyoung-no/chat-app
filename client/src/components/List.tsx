@@ -10,7 +10,7 @@ function List() {
   const user = useSelector((state: RootState) => state.auth.user)
   const queryClient = useQueryClient()
 
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+  const baseUrl = import.meta.env.VITE_API_URL || 'https://localhost:8443'
 
   useEffect(() => {
     const es = new EventSource(`${baseUrl}/stream/rooms`)

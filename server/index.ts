@@ -68,7 +68,7 @@ setupSockets(io)
 const PORT = process.env.PORT
 
 httpServer.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`)
+  console.log(`https://localhost:${PORT}`)
 })
 
 const shutdown = async () => {
