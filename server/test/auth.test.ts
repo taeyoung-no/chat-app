@@ -1,6 +1,7 @@
 import app from './setup'
 import request from 'supertest'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { setRateLimitOverride, createTestRateLimiter } from '../middleware/rateLimiter.js'
 
 describe('Auth API', () => {
   describe('POST /auth/register', () => {
@@ -76,6 +77,36 @@ describe('Auth API', () => {
       const meAfter = await agent.get('/auth/me')
       expect(meAfter.status).toBe(200)
       expect(meAfter.body.user).toBe(null)
+    })
+  })
+
+  describe('rate limit', () => {
+    it('rate limit 초과 시 429 반환 (register)', async () => {
+      const limiter = createTestRateLimiter(1)
+      setRateLimitOverride('register', limiter)
+
+      const res1 = await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+      expect(res1.status).toBe(201)
+
+      const res2 = await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+      expect(res2.status).toBe(429)
+      expect(res2.body.success).toBe(false)
+      setRateLimitOverride('register', { consume: async () => {} })
+    })
+
+    it('rate limit 초과 시 429 반환 (login)', async () => {
+      await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+
+      const limiter = createTestRateLimiter(1)
+      setRateLimitOverride('login', limiter)
+
+      const res1 = await request(app).post('/auth/login').send({ username: 'username', password: 'password' })
+      expect(res1.status).toBe(200)
+
+      const res2 = await request(app).post('/auth/login').send({ username: 'username', password: 'password' })
+      expect(res2.status).toBe(429)
+      expect(res2.body.success).toBe(false)
+      setRateLimitOverride('login', { consume: async () => {} })
     })
   })
 })

@@ -1,6 +1,7 @@
 import app from './setup'
 import request from 'supertest'
 import { beforeAll, describe, expect, it } from 'vitest'
+import { setRateLimitOverride, createTestRateLimiter } from '../middleware/rateLimiter.js'
 
 beforeAll(() => {
   app.set('publisher', { publish: () => {} })
@@ -123,6 +124,25 @@ describe('Room API', () => {
 
       expect(res.status).toBe(401)
       expect(res.body.success).toBe(false)
+    })
+  })
+
+  describe('rate limit', () => {
+    it('rate limit 초과 시 429 반환', async () => {
+      const agent = request.agent(app)
+      await agent.post('/auth/register').send({ username: 'username', password: 'password' })
+      await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+
+      const limiter = createTestRateLimiter(1)
+      setRateLimitOverride('create-room', limiter)
+
+      const res1 = await agent.post('/room').send({ name: 'room' })
+      expect(res1.status).toBe(201)
+
+      const res2 = await agent.post('/room').send({ name: 'room' })
+      expect(res2.status).toBe(429)
+      expect(res2.body.success).toBe(false)
+      setRateLimitOverride('create-room', { consume: async () => {} })
     })
   })
 })

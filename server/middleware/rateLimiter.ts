@@ -57,6 +57,15 @@ export function setRateLimitOverride(name: string, limiter: any) {
   overrides[name] = limiter
 }
 
+export function createTestRateLimiter(points: number) {
+  return new RateLimiterRedis({
+    storeClient: redisClient,
+    keyPrefix: `limiter:test-${Date.now()}`,
+    points,
+    duration: 60,
+  })
+}
+
 export async function consumeRegisterRateLimit(req: Request, res: Response, next: NextFunction) {
   try {
     const limiter = resolveLimiter(registerLimiter, 'register')

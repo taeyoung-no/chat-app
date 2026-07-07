@@ -2,6 +2,7 @@ import app, { createTestSocketServer } from './setup'
 import request from 'supertest'
 import { beforeAll, afterAll, describe, expect, it } from 'vitest'
 import { io as Client } from 'socket.io-client'
+import { setRateLimitOverride, createTestRateLimiter } from '../middleware/rateLimiter.js'
 
 describe('Socket / Message', () => {
   let url: string
@@ -213,5 +214,46 @@ describe('Socket / Message', () => {
 
     client1.close()
     client2.close()
+  })
+
+  it('rate limit 초과 시 error 이벤트 수신 (message)', async () => {
+    const agent = request.agent(app)
+    const res = await agent.post('/auth/register').send({ username: 'username', password: 'password' })
+
+    const cookies = res.headers['set-cookie']
+    const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
+
+    const client = Client(url, {
+      withCredentials: true,
+      extraHeaders: { Cookie: cookieHeader },
+    })
+
+    await new Promise<void>((resolve) => {
+      client.on('connect', resolve)
+    })
+
+    const createRes = await agent.post('/room').send({ name: 'room' })
+    const roomId = createRes.body.room._id
+
+    client.emit('join', roomId)
+    await new Promise((resolve) => client.once('messages', resolve))
+
+    const limiter = createTestRateLimiter(1)
+    setRateLimitOverride('message', limiter)
+
+    client.emit('message', { roomId, content: 'Hello World!' })
+    const received = await new Promise<any>((resolve) => {
+      client.once('message', resolve)
+    })
+    expect(received.content).toBe('Hello World!')
+
+    client.emit('message', { roomId, content: 'Hello World!' })
+    const err = await new Promise<any>((resolve) => {
+      client.once('error', resolve)
+    })
+    expect(err).toBeTruthy()
+
+    client.close()
+    setRateLimitOverride('message', { consume: async () => {} })
   })
 })
