@@ -5,6 +5,7 @@ import validate from './utils/validate.js'
 import { sendMessageSchema } from 'shared/schemas/message.js'
 import type { Message } from 'shared/schemas/message.js'
 import Messages from './models/Message.js'
+import { consumeMessageRateLimit } from './middleware/rateLimiter.js'
 
 export function setupSockets(io: Server) {
   io.use((socket, next) => {
@@ -45,6 +46,9 @@ export function setupSockets(io: Server) {
     socket.on('message', async (data) => {
       if (!socket.data.userId) {
         return socket.emit('error', { message: '로그인부터 하세요' })
+      }
+      if (!(await consumeMessageRateLimit(socket.data.userId))) {
+        return socket.emit('error', { message: '요청 너무 많이 하지 마세요' })
       }
       try {
         const { roomId, content } = validate(sendMessageSchema, data)

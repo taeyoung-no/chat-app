@@ -5,10 +5,11 @@ import { createRoomSchema } from 'shared/schemas/room'
 import type { Room } from 'shared/schemas/room'
 import validate from '../utils/validate'
 import Message from '../models/Message'
+import { consumeCreateRoomRateLimit } from '../middleware/rateLimiter'
 
 const router = express.Router()
 
-router.post('/', isAuthenticated, async (req, res, next) => {
+router.post('/', isAuthenticated, consumeCreateRoomRateLimit, async (req, res, next) => {
   try {
     const { name } = validate(createRoomSchema, req.body)
 

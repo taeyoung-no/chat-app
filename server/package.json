@@ -9,6 +9,7 @@
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "mongoose": "^9.7.0",
+    "rate-limiter-flexible": "^11.2.0",
     "redis": "^4.6.13",
     "shared": "*",
     "socket.io": "^4.8.3"

@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import { createServer } from 'http'
 import { Server as SocketIOServer } from 'socket.io'
 import { setupSockets } from '../socket.js'
+import { setRateLimitOverride } from '../middleware/rateLimiter.js'
 
 let mongod: MongoMemoryServer
 let app: any
@@ -11,9 +12,15 @@ let app: any
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create()
   const uri = (process.env.MONGODB_URI = mongod.getUri())
-    await mongoose.connect(uri)
-    
+  await mongoose.connect(uri)
+
   app = (await import('../app.js')).default
+
+  const dummyLimiter = { consume: async () => {} }
+  app.set('limiter:register', dummyLimiter)
+  app.set('limiter:login', dummyLimiter)
+  app.set('limiter:create-room', dummyLimiter)
+  setRateLimitOverride('message', dummyLimiter)
 })
 
 afterEach(async () => {

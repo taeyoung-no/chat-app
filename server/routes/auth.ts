@@ -5,10 +5,11 @@ import AppError from '../utils/AppError'
 import { loginSchema, registerSchema } from 'shared/schemas/auth'
 import type { User } from 'shared/schemas/auth'
 import validate from '../utils/validate'
+import { consumeRegisterRateLimit, consumeLoginRateLimit } from '../middleware/rateLimiter'
 
 const router = express.Router()
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', consumeRegisterRateLimit, async (req, res, next) => {
   try {
     const { username, password } = validate(registerSchema, req.body)
 
@@ -38,7 +39,7 @@ router.post('/register', async (req, res, next) => {
   }
 })
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', consumeLoginRateLimit, async (req, res, next) => {
   try {
     const { username, password } = validate(loginSchema, req.body)
 
