@@ -49,9 +49,8 @@ const messageLimiter = createLimiter('message')
 
 const overrides: Record<string, any> = {}
 
-function resolveLimiter(defaultLimiter: any, req: Request, name: string) {
-  const mock = (req as any).app?.get(`limiter:${name}`) || overrides[name]
-  return mock || defaultLimiter
+function resolveLimiter(defaultLimiter: any, name: string) {
+  return overrides[name] || defaultLimiter
 }
 
 export function setRateLimitOverride(name: string, limiter: any) {
@@ -60,7 +59,7 @@ export function setRateLimitOverride(name: string, limiter: any) {
 
 export async function consumeRegisterRateLimit(req: Request, res: Response, next: NextFunction) {
   try {
-    const limiter = resolveLimiter(registerLimiter, req, 'register')
+    const limiter = resolveLimiter(registerLimiter, 'register')
     const key = req.ip
     await limiter.consume(key)
     next()
@@ -74,7 +73,7 @@ export async function consumeRegisterRateLimit(req: Request, res: Response, next
 
 export async function consumeLoginRateLimit(req: Request, res: Response, next: NextFunction) {
   try {
-    const limiter = resolveLimiter(loginLimiter, req, 'login')
+    const limiter = resolveLimiter(loginLimiter, 'login')
     const key = req.ip
     await limiter.consume(key)
     next()
@@ -88,7 +87,7 @@ export async function consumeLoginRateLimit(req: Request, res: Response, next: N
 
 export async function consumeCreateRoomRateLimit(req: Request, res: Response, next: NextFunction) {
   try {
-    const limiter = resolveLimiter(createRoomLimiter, req, 'create-room')
+    const limiter = resolveLimiter(createRoomLimiter, 'create-room')
     const key = (req as any).session?.userId
     await limiter.consume(key)
     next()
@@ -102,7 +101,7 @@ export async function consumeCreateRoomRateLimit(req: Request, res: Response, ne
 
 export async function consumeMessageRateLimit(key: string) {
   try {
-    const limiter = overrides['message'] || messageLimiter
+    const limiter = resolveLimiter(messageLimiter, 'message')
     await limiter.consume(key)
     return true
   } catch {

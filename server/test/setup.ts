@@ -16,11 +16,11 @@ beforeAll(async () => {
 
   app = (await import('../app.js')).default
 
-  const dummyLimiter = { consume: async () => {} }
-  app.set('limiter:register', dummyLimiter)
-  app.set('limiter:login', dummyLimiter)
-  app.set('limiter:create-room', dummyLimiter)
-  setRateLimitOverride('message', dummyLimiter)
+  const mock = { consume: async () => {} }
+  setRateLimitOverride('register', mock)
+  setRateLimitOverride('login', mock)
+  setRateLimitOverride('create-room', mock)
+  setRateLimitOverride('message', mock)
 })
 
 afterEach(async () => {
