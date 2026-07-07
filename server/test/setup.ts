@@ -39,7 +39,13 @@ export async function createTestSocketServer() {
   const httpServer = createServer(app)
   const io = new SocketIOServer(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL,
+      origin: (origin, callback) => {
+        if (origin === process.env.CLIENT_URL) {
+          callback(null, true)
+        } else {
+          callback(new Error('[CORS] origin 허용 안 함'))
+        }
+      },
       credentials: true,
     },
   })

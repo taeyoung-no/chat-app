@@ -6,7 +6,10 @@ import { setRateLimitOverride, createTestRateLimiter } from '../middleware/rateL
 describe('Auth API', () => {
   describe('POST /auth/register', () => {
     it('회원가입 성공', async () => {
-      const res = await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+      const res = await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
 
       expect(res.status).toBe(201)
       expect(res.body.success).toBe(true)
@@ -16,22 +19,34 @@ describe('Auth API', () => {
     })
 
     it('username 중복이면 400', async () => {
-      await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
-      const res = await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+      await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
+      const res = await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
 
       expect(res.status).toBe(400)
       expect(res.body.success).toBe(false)
     })
 
     it('username 공백이면 400', async () => {
-      const res = await request(app).post('/auth/register').send({ username: ' ' })
+      const res = await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: ' ' })
 
       expect(res.status).toBe(400)
       expect(res.body.success).toBe(false)
     })
 
     it('password 8자 미만이면 400', async () => {
-      const res = await request(app).post('/auth/register').send({ username: 'username', password: 'pwd' })
+      const res = await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'pwd' })
 
       expect(res.status).toBe(400)
       expect(res.body.success).toBe(false)
@@ -40,11 +55,17 @@ describe('Auth API', () => {
 
   describe('POST /auth/login', () => {
     beforeEach(async () => {
-      await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+      await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
     })
 
     it('정상 로그인 성공', async () => {
-      const res = await request(app).post('/auth/login').send({ username: 'username', password: 'password' })
+      const res = await request(app)
+        .post('/auth/login')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
 
       expect(res.status).toBe(200)
       expect(res.body.success).toBe(true)
@@ -52,7 +73,10 @@ describe('Auth API', () => {
     })
 
     it('비밀번호 틀리면 400', async () => {
-      const res = await request(app).post('/auth/login').send({ username: 'username', password: 'wrongpw' })
+      const res = await request(app)
+        .post('/auth/login')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'wrongpw' })
 
       expect(res.status).toBe(400)
     })
@@ -62,19 +86,25 @@ describe('Auth API', () => {
     it('로그인 후 /me 조회, 로그아웃 후 /me 조회', async () => {
       const agent = request.agent(app)
 
-      await agent.post('/auth/register').send({ username: 'username', password: 'password' })
-      await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+      await agent
+        .set('Origin', process.env.CLIENT_URL)
+        .post('/auth/register')
+        .send({ username: 'username', password: 'password' })
+      await agent
+        .set('Origin', process.env.CLIENT_URL)
+        .post('/auth/login')
+        .send({ username: 'username', password: 'password' })
 
-      const meRes = await agent.get('/auth/me')
+      const meRes = await agent.set('Origin', process.env.CLIENT_URL).get('/auth/me')
       expect(meRes.status).toBe(200)
       expect(meRes.body.success).toBe(true)
       expect(meRes.body.user.username).toBe('username')
 
-      const logoutRes = await agent.post('/auth/logout')
+      const logoutRes = await agent.set('Origin', process.env.CLIENT_URL).post('/auth/logout')
       expect(logoutRes.status).toBe(200)
       expect(logoutRes.body.success).toBe(true)
 
-      const meAfter = await agent.get('/auth/me')
+      const meAfter = await agent.set('Origin', process.env.CLIENT_URL).get('/auth/me')
       expect(meAfter.status).toBe(200)
       expect(meAfter.body.user).toBe(null)
     })
@@ -85,25 +115,40 @@ describe('Auth API', () => {
       const limiter = createTestRateLimiter(1)
       setRateLimitOverride('register', limiter)
 
-      const res1 = await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+      const res1 = await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
       expect(res1.status).toBe(201)
 
-      const res2 = await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+      const res2 = await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
       expect(res2.status).toBe(429)
       expect(res2.body.success).toBe(false)
       setRateLimitOverride('register', { consume: async () => {} })
     })
 
     it('rate limit 초과 시 429 반환 (login)', async () => {
-      await request(app).post('/auth/register').send({ username: 'username', password: 'password' })
+      await request(app)
+        .post('/auth/register')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
 
       const limiter = createTestRateLimiter(1)
       setRateLimitOverride('login', limiter)
 
-      const res1 = await request(app).post('/auth/login').send({ username: 'username', password: 'password' })
+      const res1 = await request(app)
+        .post('/auth/login')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
       expect(res1.status).toBe(200)
 
-      const res2 = await request(app).post('/auth/login').send({ username: 'username', password: 'password' })
+      const res2 = await request(app)
+        .post('/auth/login')
+        .set('Origin', process.env.CLIENT_URL!)
+        .send({ username: 'username', password: 'password' })
       expect(res2.status).toBe(429)
       expect(res2.body.success).toBe(false)
       setRateLimitOverride('login', { consume: async () => {} })

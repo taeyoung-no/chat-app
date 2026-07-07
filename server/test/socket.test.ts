@@ -26,6 +26,7 @@ describe('Socket / Message', () => {
   it('인증 없이 소켓 연결하면 실패', async () => {
     const client = Client(url, {
       withCredentials: true,
+      extraHeaders: { Origin: process.env.CLIENT_URL! },
     })
 
     const err = await new Promise<any>((resolve) => {
@@ -43,22 +44,28 @@ describe('Socket / Message', () => {
   it('로그인 후 join, messages 수신, 메시지 전송, broadcast 수신', async () => {
     const agent = request.agent(app)
 
-    const res = await agent.post('/auth/register').send({ username: 'username', password: 'password' })
-    await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+    const res = await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/register')
+      .send({ username: 'username', password: 'password' })
+    await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/login')
+      .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
       withCredentials: true,
-      extraHeaders: { Cookie: cookieHeader },
+      extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
 
     await new Promise<void>((resolve) => {
       client.on('connect', resolve)
     })
 
-    const createRes = await agent.post('/room').send({ name: 'room' })
+    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client.emit('join', roomId)
@@ -84,20 +91,26 @@ describe('Socket / Message', () => {
 
   it('잘못된 메시지 전송 시 error 이벤트 수신', async () => {
     const agent = request.agent(app)
-    const res = await agent.post('/auth/register').send({ username: 'username', password: 'password' })
-    await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+    const res = await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/register')
+      .send({ username: 'username', password: 'password' })
+    await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/login')
+      .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
       withCredentials: true,
-      extraHeaders: { Cookie: cookieHeader },
+      extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
 
     await new Promise<void>((resolve) => client.on('connect', resolve))
 
-    const createRes = await agent.post('/room').send({ name: 'room' })
+    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client.emit('join', roomId)
@@ -117,24 +130,36 @@ describe('Socket / Message', () => {
 
   it('메시지 브로드캐스트', async () => {
     const agent1 = request.agent(app)
-    let res = await agent1.post('/auth/register').send({ username: 'username', password: 'password' })
-    await agent1.post('/auth/login').send({ username: 'username', password: 'password' })
+    let res = await agent1
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/register')
+      .send({ username: 'username', password: 'password' })
+    await agent1
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/login')
+      .send({ username: 'username', password: 'password' })
     const cookies1 = res.headers['set-cookie']
     const cookieHeader1 = Array.isArray(cookies1) ? cookies1.join('; ') : cookies1 || ''
 
     const agent2 = request.agent(app)
-    res = await agent2.post('/auth/register').send({ username: 'other', password: 'password' })
-    await agent2.post('/auth/login').send({ username: 'other', password: 'password' })
+    res = await agent2
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/register')
+      .send({ username: 'other', password: 'password' })
+    await agent2
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/login')
+      .send({ username: 'other', password: 'password' })
     const cookies2 = res.headers['set-cookie']
     const cookieHeader2 = Array.isArray(cookies2) ? cookies2.join('; ') : cookies2 || ''
 
     const client1 = Client(url, {
       withCredentials: true,
-      extraHeaders: { Cookie: cookieHeader1 },
+      extraHeaders: { Cookie: cookieHeader1, Origin: process.env.CLIENT_URL! },
     })
     const client2 = Client(url, {
       withCredentials: true,
-      extraHeaders: { Cookie: cookieHeader2 },
+      extraHeaders: { Cookie: cookieHeader2, Origin: process.env.CLIENT_URL! },
     })
 
     await Promise.all([
@@ -142,7 +167,7 @@ describe('Socket / Message', () => {
       new Promise<void>((resolve) => client2.on('connect', resolve)),
     ])
 
-    const createRes = await agent1.post('/room').send({ name: 'room' })
+    const createRes = await agent1.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client1.emit('join', roomId)
@@ -168,22 +193,28 @@ describe('Socket / Message', () => {
 
   it('messages 이벤트 수신', async () => {
     const agent = request.agent(app)
-    const res = await agent.post('/auth/register').send({ username: 'username', password: 'password' })
-    await agent.post('/auth/login').send({ username: 'username', password: 'password' })
+    const res = await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/register')
+      .send({ username: 'username', password: 'password' })
+    await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/login')
+      .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client1 = Client(url, {
       withCredentials: true,
-      extraHeaders: { Cookie: cookieHeader },
+      extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
 
     await new Promise<void>((resolve) => {
       client1.on('connect', resolve)
     })
 
-    const createRes = await agent.post('/room').send({ name: 'room' })
+    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client1.emit('join', roomId)
@@ -194,7 +225,7 @@ describe('Socket / Message', () => {
 
     const client2 = Client(url, {
       withCredentials: true,
-      extraHeaders: { Cookie: cookieHeader },
+      extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
 
     await new Promise<void>((resolve) => {
@@ -218,21 +249,24 @@ describe('Socket / Message', () => {
 
   it('rate limit 초과 시 error 이벤트 수신 (message)', async () => {
     const agent = request.agent(app)
-    const res = await agent.post('/auth/register').send({ username: 'username', password: 'password' })
+    const res = await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/register')
+      .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
       withCredentials: true,
-      extraHeaders: { Cookie: cookieHeader },
+      extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
 
     await new Promise<void>((resolve) => {
       client.on('connect', resolve)
     })
 
-    const createRes = await agent.post('/room').send({ name: 'room' })
+    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client.emit('join', roomId)
