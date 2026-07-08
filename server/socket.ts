@@ -9,7 +9,7 @@ import { consumeMessageRateLimit } from './middleware/rateLimiter.js'
 
 export function setupSockets(io: Server) {
   io.use((socket, next) => {
-    if (socket.handshake.headers.origin !== process.env.CLIENT_URL) {
+    if (socket.handshake.headers.origin && socket.handshake.headers.origin !== process.env.CLIENT_URL) {
       return next(new Error('[CORS] origin 허용 안 함'))
     }
 

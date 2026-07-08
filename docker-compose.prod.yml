@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
+      args:
+        - VITE_API_URL=https://localhost:8443
     container_name: chat-nginx-prod
     ports:
       - "8443:443"

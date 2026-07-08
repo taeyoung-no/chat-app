@@ -2,7 +2,7 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: ./nginx/Dockerfile
+      dockerfile: ./nginx/Dockerfile.dev
     container_name: chat-nginx
     ports:
       - "8443:443"

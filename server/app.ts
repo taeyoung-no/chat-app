@@ -39,7 +39,7 @@ app.use(
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (origin === process.env.CLIENT_URL) {
+      if (!origin || origin === process.env.CLIENT_URL) {
         callback(null, true)
       } else {
         callback(new Error('[CORS] origin 허용 안 함'))
