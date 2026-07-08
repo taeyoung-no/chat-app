@@ -1,3 +1,9 @@
 node_modules
-.env
+.env*
+!.env.example
 nginx/ssl/*.pem
+
+dist/
+client/dist/
+server/dist/
+shared/dist/

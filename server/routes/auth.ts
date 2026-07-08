@@ -1,11 +1,11 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
-import Users from '../models/User'
-import AppError from '../utils/AppError'
+import Users from '../models/User.js'
+import AppError from '../utils/AppError.js'
 import { loginSchema, registerSchema } from 'shared/schemas/auth'
 import type { User } from 'shared/schemas/auth'
-import validate from '../utils/validate'
-import { consumeRegisterRateLimit, consumeLoginRateLimit } from '../middleware/rateLimiter'
+import validate from '../utils/validate.js'
+import { consumeRegisterRateLimit, consumeLoginRateLimit } from '../middleware/rateLimiter.js'
 
 const router = express.Router()
 

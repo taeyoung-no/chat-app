@@ -2,7 +2,10 @@
   "name": "shared",
   "type": "module",
   "exports": {
-    "./schemas/*": "./schemas/*.ts"
+    "./schemas/*": "./dist/schemas/*.js"
+  },
+  "scripts": {
+    "build": "tsc"
   },
   "dependencies": {
     "zod": "^4.4.3"

@@ -1,6 +1,10 @@
 {
   "name": "server",
   "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
   "dependencies": {
     "@socket.io/redis-adapter": "^8.2.1",
     "bcrypt": "^6.0.0",

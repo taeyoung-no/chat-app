@@ -1,11 +1,11 @@
 import express from 'express'
-import isAuthenticated from '../middleware/auth'
-import Rooms from '../models/Room'
+import isAuthenticated from '../middleware/auth.js'
+import Rooms from '../models/Room.js'
 import { createRoomSchema } from 'shared/schemas/room'
 import type { Room } from 'shared/schemas/room'
-import validate from '../utils/validate'
-import Message from '../models/Message'
-import { consumeCreateRoomRateLimit } from '../middleware/rateLimiter'
+import validate from '../utils/validate.js'
+import Message from '../models/Message.js'
+import { consumeCreateRoomRateLimit } from '../middleware/rateLimiter.js'
 
 const router = express.Router()
 

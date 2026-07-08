@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
     "paths": {
-      "shared/*": ["../shared/*"]
+      "shared/*": ["../shared/dist/*"]
     }
   },
-  "include": ["**/*"]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist", "test", "vitest.config.ts"]
 }
