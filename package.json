@@ -7,6 +7,7 @@
     "shared"
   ],
   "devDependencies": {
-    "artillery": "^2.0.0"
+    "artillery": "^2.0.0",
+    "dotenv": "^16.6.1"
   }
 }
