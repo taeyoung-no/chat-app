@@ -6,7 +6,7 @@ client.collectDefaultMetrics({ register })
 
 export const sseClientsGauge = new client.Gauge({
   name: 'chat_sse_clients',
-  help: 'Number of SSE responses currently tracked in the in-memory Set',
+  help: 'Number of SSE clients',
   registers: [register],
 })
 

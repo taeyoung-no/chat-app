@@ -40,7 +40,8 @@ try {
 
   await sseSubscriber.subscribe('room-events', (e: string) => {
     const payload = `event: ${e}\ndata: \n\n`
-    for (const res of [...sseClients]) {
+    for (const res of sseClients) {
+      if (res.writableEnded || res.destroyed) continue
       res.write(payload)
     }
   })

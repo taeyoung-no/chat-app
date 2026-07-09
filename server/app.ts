@@ -51,11 +51,18 @@ app.get('/stream/rooms', (req, res) => {
   const clients = req.app.get('sseClients') as Set<Response>
   clients.add(res)
   setSseClientCount(clients.size)
+
   res.writeHead(200, {
     Connection: 'keep-alive',
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
   })
+
+  const cleanup = () => {
+    if (!clients.delete(res)) return
+    setSseClientCount(clients.size)
+  }
+  res.on('close', cleanup)
 })
 app.use('/auth', authRouter)
 app.use('/room', roomRouter)
