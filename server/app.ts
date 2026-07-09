@@ -1,10 +1,11 @@
-import express from 'express'
+import express, { Response } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import sessionMiddleware from './middleware/session.js'
 import authRouter from './routes/auth.js'
 import roomRouter from './routes/room.js'
 import errorHandler from './middleware/errorHandler.js'
+import { register, setSseClientCount } from './metrics.js'
 
 const app = express()
 
@@ -23,6 +24,15 @@ app.use(
   })
 )
 
+app.get('/metrics', async (_, res, next) => {
+  try {
+    res.set('Content-Type', register.contentType)
+    res.end(await register.metrics())
+  } catch (err) {
+    next(err)
+  }
+})
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -38,7 +48,9 @@ app.use(
 app.use(express.json())
 app.use(sessionMiddleware)
 app.get('/stream/rooms', (req, res) => {
-  req.app.get('sseClients').add(res)
+  const clients = req.app.get('sseClients') as Set<Response>
+  clients.add(res)
+  setSseClientCount(clients.size)
   res.writeHead(200, {
     Connection: 'keep-alive',
     'Content-Type': 'text/event-stream',

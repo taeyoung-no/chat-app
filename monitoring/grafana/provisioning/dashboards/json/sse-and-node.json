@@ -1,0 +1,33 @@
+{
+  "uid": "chat-sse-node",
+  "title": "SSE Memory Leak",
+  "tags": ["sse"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-10m", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "chat_sse_clients",
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(chat_sse_clients)",
+          "legendFormat": "sse clients"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": []
+      }
+    }
+  ]
+}
