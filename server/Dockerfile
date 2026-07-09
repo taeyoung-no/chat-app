@@ -27,6 +27,9 @@ RUN npm install --workspace=server --omit=dev
 COPY --from=builder /app/shared/dist ./shared/dist
 COPY --from=builder /app/server/dist ./server/dist
 
+RUN chown -R node:node /app
+USER node
+
 WORKDIR /app/server
 
 EXPOSE 3000
