@@ -6,16 +6,19 @@ import CreateRoomModal from './CreateRoomModal'
 import { useMutation } from '@tanstack/react-query'
 import { logout } from '../api/auth'
 import { setUser } from '../store/slices/authSlice'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import RegisterModal from './RegisterModal'
 
 function Navbar() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
   const user = useSelector((state: RootState) => state.auth.user)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
+
+  const isRoomPage = location.pathname.startsWith('/room/')
 
   const mutation = useMutation({
     mutationFn: logout,
@@ -35,15 +38,18 @@ function Navbar() {
           <div className="flex items-center gap-4">
             <h1 className="text-2xl">Open Chatting</h1>
             <div className="flex items-center gap-2">
-              <Link to="/" className="cursor-pointer hover:underline">
-                목록
-              </Link>
-              <button
-                onClick={() => (user ? setShowCreateRoomModal(true) : setShowLoginModal(true))}
-                className="cursor-pointer hover:underline"
-              >
-                생성
-              </button>
+              {isRoomPage ? (
+                <Link to="/" className="cursor-pointer hover:underline">
+                  목록
+                </Link>
+              ) : (
+                <button
+                  onClick={() => (user ? setShowCreateRoomModal(true) : setShowLoginModal(true))}
+                  className="cursor-pointer hover:underline"
+                >
+                  생성
+                </button>
+              )}
             </div>
           </div>
 
