@@ -42,7 +42,6 @@ function Room() {
       setMessages((prev) => [...prev, data])
     })
     socket.on('error', (err: any) => {
-      queryClient.invalidateQueries({ queryKey: ['rooms'] })
       navigate('/')
       alert(err.message || '서버 에러인 듯')
     })
@@ -52,6 +51,7 @@ function Room() {
       socket.off('message')
       socket.off('error')
       socket.disconnect()
+      queryClient.invalidateQueries({ queryKey: ['rooms'] })
     }
   }, [socket, id])
 
