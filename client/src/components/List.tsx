@@ -54,6 +54,7 @@ function List() {
     <main>
       {isLoading && <p className="text-center text-2xl">방 불러오는 중...</p>}
       {isError && <p className="text-center text-2xl">{error?.message}</p>}
+      {!isLoading && !isError && rooms.length === 0 && <p className="text-center text-2xl">방이 없습니다</p>}
 
       <div className="max-w-2xl mx-auto space-y-5 mb-5">
         {rooms.map((room) => (

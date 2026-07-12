@@ -13,6 +13,7 @@ function Room() {
   const { id } = useParams()
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
+  const [messagesLoaded, setMessagesLoaded] = useState(false)
 
   const username = useSelector((state: RootState) => state.auth.user?.username)
   const messageEndRef = useRef<HTMLDivElement>(null)
@@ -25,6 +26,8 @@ function Room() {
   useEffect(() => {
     if (!socket) return
 
+    setMessages([])
+    setMessagesLoaded(false)
     socket.emit('join', id)
 
     socket.on('connect_error', (err: any) => {
@@ -33,6 +36,7 @@ function Room() {
     })
     socket.on('messages', (data: Message[]) => {
       setMessages(data)
+      setMessagesLoaded(true)
     })
     socket.on('message', (data: Message) => {
       setMessages((prev) => [...prev, data])
@@ -74,6 +78,7 @@ function Room() {
   return (
     <main className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
       <div className="flex-1 overflow-y-auto">
+        {messagesLoaded && messages.length === 0 && <p className="text-center text-2xl">메시지가 없습니다</p>}
         {messages.map((msg, i) => (
           <div key={i} className={`mb-3 ${username === msg.username ? 'text-right' : 'text-left'}`}>
             <div>{msg.username}</div>
