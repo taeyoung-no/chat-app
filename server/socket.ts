@@ -5,6 +5,7 @@ import validate from './utils/validate.js'
 import { sendMessageSchema } from 'shared/schemas/message'
 import type { Message } from 'shared/schemas/message'
 import Messages from './models/Message.js'
+import Rooms from './models/Room.js'
 import { consumeMessageRateLimit } from './middleware/rateLimiter.js'
 
 export function setupSockets(io: Server) {
@@ -56,6 +57,10 @@ export function setupSockets(io: Server) {
       }
       try {
         const { roomId, content } = validate(sendMessageSchema, data)
+        const room = await Rooms.findById(roomId)
+        if (!room) {
+          return socket.emit('error', { message: '없는 방입니다' })
+        }
         const message = await Messages.create({
           roomId,
           username: socket.data.username,

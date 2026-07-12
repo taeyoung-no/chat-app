@@ -247,6 +247,40 @@ describe('Socket / Message', () => {
     client2.close()
   })
 
+  it('없는 방에 메시지 전송 시 error 이벤트 수신', async () => {
+    const agent = request.agent(app)
+    const res = await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/register')
+      .send({ username: 'username', password: 'password' })
+    await agent
+      .set('Origin', process.env.CLIENT_URL)
+      .post('/auth/login')
+      .send({ username: 'username', password: 'password' })
+
+    const cookies = res.headers['set-cookie']
+    const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
+
+    const client = Client(url, {
+      withCredentials: true,
+      extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
+    })
+
+    await new Promise<void>((resolve) => {
+      client.on('connect', resolve)
+    })
+
+    client.emit('message', { roomId: '507f1f77bcf86cd799439011', content: 'Hello World!' })
+
+    const err = await new Promise<any>((resolve) => {
+      client.once('error', resolve)
+    })
+
+    expect(err).toBeTruthy()
+
+    client.close()
+  })
+
   it('rate limit 초과 시 error 이벤트 수신 (message)', async () => {
     const agent = request.agent(app)
     const res = await agent
