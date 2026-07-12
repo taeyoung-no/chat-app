@@ -1,10 +1,6 @@
 services:
   nginx:
-    build:
-      context: .
-      dockerfile: ./nginx/Dockerfile
-      args:
-        - VITE_API_URL=https://localhost:8443
+    image: ${ECR_REGISTRY:-355653384852.dkr.ecr.ap-northeast-2.amazonaws.com}/chat-nginx:${IMAGE_TAG:-latest}
     container_name: chat-nginx-prod
     ports:
       - "8443:8443"
@@ -15,9 +11,7 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl:ro
 
   server:
-    build:
-      context: .
-      dockerfile: server/Dockerfile
+    image: ${ECR_REGISTRY:-355653384852.dkr.ecr.ap-northeast-2.amazonaws.com}/chat-server:${IMAGE_TAG:-latest}
     env_file:
       - .env.prod
     depends_on:
