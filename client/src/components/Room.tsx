@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import type { RootState } from '../store'
 import { sendMessageSchema } from 'shared/schemas/message'
 import { io } from 'socket.io-client'
@@ -8,6 +9,7 @@ import type { Message } from 'shared/schemas/message'
 
 function Room() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { id } = useParams()
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
@@ -36,6 +38,7 @@ function Room() {
       setMessages((prev) => [...prev, data])
     })
     socket.on('error', (err: any) => {
+      queryClient.invalidateQueries({ queryKey: ['rooms'] })
       navigate('/')
       alert(err.message || '서버 에러인 듯')
     })
