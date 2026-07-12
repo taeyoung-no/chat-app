@@ -1,3 +1,5 @@
+// docker run --rm -p 6379:6379 redis:alpine
+
 import { beforeAll, afterAll, afterEach } from 'vitest'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
