@@ -57,6 +57,7 @@ app.get('/stream/rooms', (req, res) => {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
   })
+  res.write(': connected\n\n')
 
   const cleanup = () => {
     if (!clients.delete(res)) return
