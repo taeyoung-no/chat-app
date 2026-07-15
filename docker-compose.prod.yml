@@ -5,7 +5,8 @@ services:
     ports:
       - "443:8443"
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     restart: unless-stopped
     volumes:
       - ./nginx/ssl:/etc/nginx/ssl:ro
@@ -20,6 +21,18 @@ services:
       redis:
         condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "--eval",
+          "fetch('http://localhost:3000/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
   mongo:
     image: mongo:7
