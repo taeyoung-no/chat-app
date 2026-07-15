@@ -3,7 +3,7 @@ services:
     image: ${ECR_REGISTRY:-355653384852.dkr.ecr.ap-northeast-2.amazonaws.com}/chat-nginx:${IMAGE_TAG:-latest}
     container_name: chat-nginx-prod
     ports:
-      - "8443:8443"
+      - "443:8443"
     depends_on:
       - server
     restart: unless-stopped
