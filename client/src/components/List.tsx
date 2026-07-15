@@ -23,7 +23,7 @@ function List() {
     })
 
     es.onerror = (err) => {
-      console.warn(`[SSE] ${err}`)
+      console.warn('[SSE]', err)
     }
 
     return () => {
