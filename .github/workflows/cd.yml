@@ -1,0 +1,81 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+concurrency:
+  group: cd-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REGISTRY: 355653384852.dkr.ecr.ap-northeast-2.amazonaws.com
+  VITE_API_URL: https://chat.taeyoung-no.com
+
+jobs:
+  build-and-push:
+    name: Build & push images
+    if: >
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push images
+        run: |
+          set -euo pipefail
+
+          docker build -f server/Dockerfile -t chat-server .
+          docker tag chat-server:latest "$ECR_REGISTRY/chat-server:latest"
+          docker push "$ECR_REGISTRY/chat-server:latest"
+
+          docker build -f nginx/Dockerfile --build-arg "VITE_API_URL=$VITE_API_URL" -t chat-nginx .
+          docker tag chat-nginx:latest "$ECR_REGISTRY/chat-nginx:latest"
+          docker push "$ECR_REGISTRY/chat-nginx:latest"
+
+  deploy:
+    name: Deploy to EC2
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          ECR_REGISTRY: ${{ env.ECR_REGISTRY }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: AWS_REGION,ECR_REGISTRY
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            cd ~/chat-app
+
+            aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+
+            docker compose -f docker-compose.prod.yml --env-file .env.prod pull
+            docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --scale server=2 --remove-orphans
+
+            docker image prune -f
