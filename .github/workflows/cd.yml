@@ -57,6 +57,24 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get runner public IP
+        id: ip
+        run: echo "ipv4=$(curl -fsS https://api.ipify.org)" >> "$GITHUB_OUTPUT"
+
+      - name: Allow runner SSH
+        run: |
+          set -euo pipefail
+          aws ec2 authorize-security-group-ingress \
+            --group-id "${{ secrets.EC2_SG_ID }}" \
+            --ip-permissions "[{\"IpProtocol\":\"tcp\",\"FromPort\":22,\"ToPort\":22,\"IpRanges\":[{\"CidrIp\":\"${{ steps.ip.outputs.ipv4 }}/32\",\"Description\":\"github-actions-cd\"}]}]"
+
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.2
         env:
@@ -67,7 +85,6 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: AWS_REGION,ECR_REGISTRY
-          script_stop: true
           script: |
             set -euo pipefail
 
@@ -79,3 +96,12 @@ jobs:
             docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --scale server=2 --remove-orphans
 
             docker image prune -f
+
+      - name: Revoke runner SSH
+        if: always()
+        run: |
+          set -euo pipefail
+          aws ec2 revoke-security-group-ingress \
+            --group-id "${{ secrets.EC2_SG_ID }}" \
+            --ip-permissions "[{\"IpProtocol\":\"tcp\",\"FromPort\":22,\"ToPort\":22,\"IpRanges\":[{\"CidrIp\":\"${{ steps.ip.outputs.ipv4 }}/32\"}]}]" \
+          || true
