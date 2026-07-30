@@ -6,7 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 process.env.NODE_ENV = 'test'
 process.env.SESSION_SECRET = 'test-session-secret-1234567890-very-long-string'
-process.env.CLIENT_URL = 'https://localhost:5173'
+process.env.CLIENT_URL = 'http://localhost:5173'
 process.env.REDIS_URL = 'redis://127.0.0.1:6379'
 
 export default defineConfig({

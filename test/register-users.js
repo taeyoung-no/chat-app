@@ -4,7 +4,7 @@ const path = require('path')
 require('dotenv').config({ quiet: true })
 
 const PATH = path.join(__dirname, 'users.csv')
-const BASE_URL = process.env.VITE_API_URL || 'https://localhost:8443'
+const BASE_URL = process.env.VITE_API_URL || 'http://localhost:3000'
 const BATCH_SIZE = 100
 
 /** 회원가입 성공 시 혹은 이미 가입된 경우 true 반환 */

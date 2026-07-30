@@ -18,7 +18,7 @@ function Room() {
   const username = useSelector((state: RootState) => state.auth.user?.username)
   const messageEndRef = useRef<HTMLDivElement>(null)
 
-  const baseUrl = import.meta.env.VITE_API_URL || 'https://localhost:8443'
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
   const socket = useMemo(() => {
     return io(baseUrl, { withCredentials: true, forceNew: true })
   }, [baseUrl])
