@@ -19,7 +19,7 @@ function Room() {
   const messageEndRef = useRef<HTMLDivElement>(null)
 
   const socket = useMemo(() => {
-    return io({ path: '/api/socket.io', withCredentials: true, forceNew: true })
+    return io({ path: '/api/socket.io', forceNew: true })
   }, [])
 
   useEffect(() => {

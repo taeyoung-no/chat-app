@@ -56,16 +56,6 @@ app.set('sseSubscriber', sseSubscriber)
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
   path: '/api/socket.io',
-  cors: {
-    origin: (origin, callback) => {
-      if (!origin || origin === process.env.CLIENT_URL) {
-        callback(null, true)
-      } else {
-        callback(new Error('[CORS] origin 허용 안 함'))
-      }
-    },
-    credentials: true,
-  },
 })
 
 io.adapter(createAdapter(publisher, socketSubscriber))
