@@ -25,6 +25,7 @@ describe('Socket / Message', () => {
 
   it('인증 없이 소켓 연결하면 실패', async () => {
     const client = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Origin: process.env.CLIENT_URL! },
     })
@@ -46,17 +47,18 @@ describe('Socket / Message', () => {
 
     const res = await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/register')
+      .post('/api/auth/register')
       .send({ username: 'username', password: 'password' })
     await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/login')
+      .post('/api/auth/login')
       .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
@@ -65,7 +67,7 @@ describe('Socket / Message', () => {
       client.on('connect', resolve)
     })
 
-    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
+    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/api/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client.emit('join', roomId)
@@ -93,24 +95,25 @@ describe('Socket / Message', () => {
     const agent = request.agent(app)
     const res = await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/register')
+      .post('/api/auth/register')
       .send({ username: 'username', password: 'password' })
     await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/login')
+      .post('/api/auth/login')
       .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
 
     await new Promise<void>((resolve) => client.on('connect', resolve))
 
-    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
+    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/api/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client.emit('join', roomId)
@@ -132,11 +135,11 @@ describe('Socket / Message', () => {
     const agent1 = request.agent(app)
     let res = await agent1
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/register')
+      .post('/api/auth/register')
       .send({ username: 'username', password: 'password' })
     await agent1
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/login')
+      .post('/api/auth/login')
       .send({ username: 'username', password: 'password' })
     const cookies1 = res.headers['set-cookie']
     const cookieHeader1 = Array.isArray(cookies1) ? cookies1.join('; ') : cookies1 || ''
@@ -144,20 +147,22 @@ describe('Socket / Message', () => {
     const agent2 = request.agent(app)
     res = await agent2
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/register')
+      .post('/api/auth/register')
       .send({ username: 'other', password: 'password' })
     await agent2
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/login')
+      .post('/api/auth/login')
       .send({ username: 'other', password: 'password' })
     const cookies2 = res.headers['set-cookie']
     const cookieHeader2 = Array.isArray(cookies2) ? cookies2.join('; ') : cookies2 || ''
 
     const client1 = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Cookie: cookieHeader1, Origin: process.env.CLIENT_URL! },
     })
     const client2 = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Cookie: cookieHeader2, Origin: process.env.CLIENT_URL! },
     })
@@ -167,7 +172,7 @@ describe('Socket / Message', () => {
       new Promise<void>((resolve) => client2.on('connect', resolve)),
     ])
 
-    const createRes = await agent1.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
+    const createRes = await agent1.set('Origin', process.env.CLIENT_URL).post('/api/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client1.emit('join', roomId)
@@ -195,17 +200,18 @@ describe('Socket / Message', () => {
     const agent = request.agent(app)
     const res = await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/register')
+      .post('/api/auth/register')
       .send({ username: 'username', password: 'password' })
     await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/login')
+      .post('/api/auth/login')
       .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client1 = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
@@ -214,7 +220,7 @@ describe('Socket / Message', () => {
       client1.on('connect', resolve)
     })
 
-    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
+    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/api/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client1.emit('join', roomId)
@@ -224,6 +230,7 @@ describe('Socket / Message', () => {
     await new Promise((resolve) => client1.once('message', resolve))
 
     const client2 = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
@@ -251,17 +258,18 @@ describe('Socket / Message', () => {
     const agent = request.agent(app)
     const res = await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/register')
+      .post('/api/auth/register')
       .send({ username: 'username', password: 'password' })
     await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/login')
+      .post('/api/auth/login')
       .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
@@ -285,13 +293,14 @@ describe('Socket / Message', () => {
     const agent = request.agent(app)
     const res = await agent
       .set('Origin', process.env.CLIENT_URL)
-      .post('/auth/register')
+      .post('/api/auth/register')
       .send({ username: 'username', password: 'password' })
 
     const cookies = res.headers['set-cookie']
     const cookieHeader = Array.isArray(cookies) ? cookies.join('; ') : cookies || ''
 
     const client = Client(url, {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: { Cookie: cookieHeader, Origin: process.env.CLIENT_URL! },
     })
@@ -300,7 +309,7 @@ describe('Socket / Message', () => {
       client.on('connect', resolve)
     })
 
-    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/room').send({ name: 'room' })
+    const createRes = await agent.set('Origin', process.env.CLIENT_URL).post('/api/room').send({ name: 'room' })
     const roomId = createRes.body.room._id
 
     client.emit('join', roomId)

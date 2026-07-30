@@ -10,10 +10,8 @@ function List() {
   const user = useSelector((state: RootState) => state.auth.user)
   const queryClient = useQueryClient()
 
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-
   useEffect(() => {
-    const es = new EventSource(`${baseUrl}/stream/rooms`)
+    const es = new EventSource('/api/stream/rooms')
 
     es.addEventListener('create', () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
@@ -29,7 +27,7 @@ function List() {
     return () => {
       es.close()
     }
-  }, [baseUrl, queryClient])
+  }, [queryClient])
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } = useInfiniteQuery({
     queryKey: ['rooms'],

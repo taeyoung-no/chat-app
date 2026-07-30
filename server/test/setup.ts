@@ -1,5 +1,3 @@
-// docker run --rm -p 6379:6379 redis:alpine
-
 import { beforeAll, afterAll, afterEach } from 'vitest'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
@@ -40,6 +38,7 @@ afterAll(async () => {
 export async function createTestSocketServer() {
   const httpServer = createServer(app)
   const io = new SocketIOServer(httpServer, {
+    path: '/api/socket.io',
     cors: {
       origin: (origin, callback) => {
         if (!origin || origin === process.env.CLIENT_URL) {

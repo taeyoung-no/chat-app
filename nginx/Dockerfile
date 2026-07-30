@@ -11,9 +11,6 @@ RUN npm install --workspace=client
 COPY shared ./shared
 COPY client ./client
 
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
-
 RUN npm run build --workspace=shared
 RUN npm run build --workspace=client
 

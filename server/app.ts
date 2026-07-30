@@ -51,7 +51,7 @@ app.use(
 )
 app.use(express.json())
 app.use(sessionMiddleware)
-app.get('/stream/rooms', (req, res) => {
+app.get('/api/stream/rooms', (req, res) => {
   const clients = req.app.get('sseClients') as Set<Response>
   clients.add(res)
   setSseClientCount(clients.size)
@@ -69,8 +69,8 @@ app.get('/stream/rooms', (req, res) => {
   }
   res.on('close', cleanup)
 })
-app.use('/auth', authRouter)
-app.use('/room', roomRouter)
+app.use('/api/auth', authRouter)
+app.use('/api/room', roomRouter)
 app.use(errorHandler)
 
 export default app
