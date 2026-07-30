@@ -17,7 +17,7 @@ describe('Auth API', () => {
       expect(res.body.user).not.toHaveProperty('password')
     })
 
-    it('username 중복이면 400', async () => {
+    it('username 중복이면 409', async () => {
       await request(app)
         .post('/api/auth/register')
         .send({ username: 'username', password: 'password' })
@@ -25,7 +25,7 @@ describe('Auth API', () => {
         .post('/api/auth/register')
         .send({ username: 'username', password: 'password' })
 
-      expect(res.status).toBe(400)
+      expect(res.status).toBe(409)
       expect(res.body.success).toBe(false)
     })
 
@@ -65,12 +65,12 @@ describe('Auth API', () => {
       expect(res.body.user.username).toBe('username')
     })
 
-    it('비밀번호 틀리면 400', async () => {
+    it('비밀번호 틀리면 401', async () => {
       const res = await request(app)
         .post('/api/auth/login')
-        .send({ username: 'username', password: 'wrongpw' })
+        .send({ username: 'username', password: 'wrongpassword' })
 
-      expect(res.status).toBe(400)
+      expect(res.status).toBe(401)
     })
   })
 

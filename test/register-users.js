@@ -14,7 +14,7 @@ async function register(username) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password: 'password' }),
   })
-  return res.status === 201 || res.status === 400
+  return res.status === 201 || res.status === 409
 }
 
 async function processBatch(usernames, i) {

@@ -14,7 +14,7 @@ router.post('/register', consumeRegisterRateLimit, async (req, res, next) => {
     const { username, password } = validate(registerSchema, req.body)
 
     const existingUser = await Users.findOne({ username })
-    if (existingUser) return next(new AppError('username 중복임', 400))
+    if (existingUser) return next(new AppError('username 중복임', 409))
 
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await Users.create({
@@ -44,10 +44,10 @@ router.post('/login', consumeLoginRateLimit, async (req, res, next) => {
     const { username, password } = validate(loginSchema, req.body)
 
     const user = await Users.findOne({ username })
-    if (!user) return next(new AppError('뭔가 잘못 입력함', 400))
+    if (!user) return next(new AppError('뭔가 잘못 입력함', 401))
 
     const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) return next(new AppError('뭔가 잘못 입력함', 400))
+    if (!isMatch) return next(new AppError('뭔가 잘못 입력함', 401))
 
     req.session.userId = user._id.toString()
     req.session.username = user.username
