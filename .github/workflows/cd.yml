@@ -91,8 +91,8 @@ jobs:
 
             aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
-            docker compose -f docker-compose.prod.yml --env-file .env.prod pull
-            docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --scale server=2 --remove-orphans
+            docker compose -f docker-compose.prod.yml --env-file server/.env.prod pull
+            docker compose -f docker-compose.prod.yml --env-file server/.env.prod up -d --scale server=2 --remove-orphans
 
             docker image prune -f
 
