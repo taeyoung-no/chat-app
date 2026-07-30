@@ -14,7 +14,7 @@ services:
   server:
     image: ${ECR_REGISTRY:-355653384852.dkr.ecr.ap-northeast-2.amazonaws.com}/chat-server:${IMAGE_TAG:-latest}
     env_file:
-      - .env.prod
+      - server/.env.prod
     depends_on:
       mongo:
         condition: service_healthy
