@@ -66,7 +66,10 @@ export function createTestRateLimiter(points: number) {
   })
 }
 
+const rateLimitDisabled = process.env.RATE_LIMIT_DISABLED === 'true'
+
 export async function consumeRegisterRateLimit(req: Request, res: Response, next: NextFunction) {
+  if (rateLimitDisabled) return next()
   try {
     const limiter = resolveLimiter(registerLimiter, 'register')
     const key = req.ip
@@ -81,6 +84,7 @@ export async function consumeRegisterRateLimit(req: Request, res: Response, next
 }
 
 export async function consumeLoginRateLimit(req: Request, res: Response, next: NextFunction) {
+  if (rateLimitDisabled) return next()
   try {
     const limiter = resolveLimiter(loginLimiter, 'login')
     const key = req.ip
@@ -95,6 +99,7 @@ export async function consumeLoginRateLimit(req: Request, res: Response, next: N
 }
 
 export async function consumeCreateRoomRateLimit(req: Request, res: Response, next: NextFunction) {
+  if (rateLimitDisabled) return next()
   try {
     const limiter = resolveLimiter(createRoomLimiter, 'create-room')
     const key = (req as any).session?.userId
@@ -109,6 +114,7 @@ export async function consumeCreateRoomRateLimit(req: Request, res: Response, ne
 }
 
 export async function consumeMessageRateLimit(key: string) {
+  if (rateLimitDisabled) return true
   try {
     const limiter = resolveLimiter(messageLimiter, 'message')
     await limiter.consume(key)

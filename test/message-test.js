@@ -1,14 +1,11 @@
 const axios = require('axios')
-const dotenv = require('dotenv')
 const fs = require('fs')
 const path = require('path')
 const { io } = require('socket.io-client')
 
-dotenv.config({ quiet: true })
-
-const BASE_URL = process.env.VITE_API_URL || 'http://localhost:3000'
-const DURATION = 60
-const ARRIVAL_RATE = 1
+const BASE_URL = 'http://localhost:3000/api'
+const DURATION = Number(process.env.DURATION) || 60
+const ARRIVAL_RATE = Number(process.env.ARRIVAL_RATE) || 1
 const ARRIVAL_COUNT = DURATION * ARRIVAL_RATE
 
 const ROOM_ID = process.env.ROOM_ID
@@ -100,7 +97,8 @@ async function scenario() {
     }
 
     // 2. join
-    const socket = io(BASE_URL, {
+    const socket = io('http://localhost:3000', {
+      path: '/api/socket.io',
       withCredentials: true,
       extraHeaders: cookie ? { Cookie: cookie } : {},
     })
@@ -173,17 +171,17 @@ async function scenario() {
 
 function finalReport() {
   {
-    console.log(`${(Date.now() - start) / 1000}s`)
-    console.log('\n[vusers]')
-    console.log('created:', vusers.created)
-    console.log('completed:', vusers.completed)
-    console.log('failed:', vusers.failed)
+  console.log(`${(Date.now() - start) / 1000}s`)
+  console.log('\n[vusers]')
+  console.log('created:', vusers.created)
+  console.log('completed:', vusers.completed)
+  console.log('failed:', vusers.failed)
 
-    console.log('\n[http.requests]')
-    console.log(`total: ${requests}`)
-    Object.keys(codes)
-      .sort()
-      .forEach((code) => console.log(`${code}: ${codes[code]}`))
+  console.log('\n[http.requests]')
+  console.log(`total: ${requests}`)
+  Object.keys(codes)
+    .sort()
+    .forEach((code) => console.log(`${code}: ${codes[code]}`))
 
     httpLatencies.sort((a, b) => a - b)
     const min = httpLatencies[0]
@@ -203,8 +201,8 @@ function finalReport() {
     console.log(`p95: ${percentile(httpLatencies, 95).toFixed(1)}`)
     console.log(`p99: ${percentile(httpLatencies, 99).toFixed(1)}`)
 
-    console.log('\n[socketio.emits]')
-    console.log(`total: ${emits}`)
+  console.log('\n[socketio.emits]')
+  console.log(`total: ${emits}`)
   }
 
   {

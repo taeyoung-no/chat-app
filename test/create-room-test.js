@@ -1,11 +1,8 @@
 const axios = require('axios')
-const dotenv = require('dotenv')
 
-dotenv.config({ quiet: true })
-
-const BASE_URL = process.env.VITE_API_URL || 'http://localhost:3000'
-const DURATION = 60
-const ARRIVAL_RATE = 30
+const BASE_URL = 'http://localhost:3000/api'
+const DURATION = Number(process.env.DURATION) || 60
+const ARRIVAL_RATE = Number(process.env.ARRIVAL_RATE) || 30
 const ARRIVAL_COUNT = DURATION * ARRIVAL_RATE
 
 let requests = 0
@@ -144,7 +141,7 @@ function finalReport() {
     .sort()
     .forEach((code) => console.log(`${code}: ${codes[code]}`))
 
-  latencies.sort((a, b) => a - b)
+    latencies.sort((a, b) => a - b)
   const min = latencies[0]
   const max = latencies[latencies.length - 1]
   let sum = 0
