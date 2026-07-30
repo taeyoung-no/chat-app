@@ -12,7 +12,6 @@ concurrency:
 env:
   AWS_REGION: ap-northeast-2
   ECR_REGISTRY: 355653384852.dkr.ecr.ap-northeast-2.amazonaws.com
-  VITE_API_URL: https://chat.taeyoung-no.com
 
 jobs:
   build-and-push:
@@ -46,7 +45,7 @@ jobs:
           docker tag chat-server:latest "$ECR_REGISTRY/chat-server:latest"
           docker push "$ECR_REGISTRY/chat-server:latest"
 
-          docker build -f nginx/Dockerfile --build-arg "VITE_API_URL=$VITE_API_URL" -t chat-nginx .
+          docker build -f nginx/Dockerfile -t chat-nginx .
           docker tag chat-nginx:latest "$ECR_REGISTRY/chat-nginx:latest"
           docker push "$ECR_REGISTRY/chat-nginx:latest"
 
