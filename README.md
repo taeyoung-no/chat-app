@@ -19,7 +19,7 @@ Docker, AWS 배포, CI/CD, 모니터링, 부하 테스트 등 포함 실무에�
 
 | 영역 | 기술 |
 |------|------|
-| 프론트 | React, TypeScript |
+| 프론트엔드 | React, TypeScript |
 | 백엔드 | Express, TypeScript |
 | DB | MongoDB |
 | 캐시, 세션 | Redis |
