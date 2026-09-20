@@ -59,10 +59,11 @@ docker compose up -d
 
 ### 개발 서버
 ```bash
-# 터미널 1
+# 백엔드
 npm run dev --workspace=server
-
-# 터미널 2
+```
+```bash
+# 프론트엔드
 npm run dev --workspace=client
 ```
 
@@ -72,11 +73,12 @@ npm test --workspace=server
 ```
 ### 부하 테스트
 ```bash
-# 테스트용 유저 등록
+# 데이터
 node test/register-users.js
-
-#부하 테스트
+```
+```bash
+# 테스트
 node test/auth-test.js
 node test/create-room-test.js
-ROOM_ID=미리-생성한-방-ID node test/message-test.js
+ROOM_ID=<미리-생성한-방-ID> node test/message-test.js
 ```
